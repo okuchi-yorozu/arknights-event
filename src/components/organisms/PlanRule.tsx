@@ -5,7 +5,7 @@ const { Title, Paragraph } = Typography;
 
 export const EventSubmissionGuidelines = () => {
   return (
-    <Typography className="mb-8">
+    <Typography className='mb-8'>
       <Title level={4}>企画応募ルール</Title>
       <Paragraph>
         <ul>
@@ -19,4 +19,3 @@ export const EventSubmissionGuidelines = () => {
     </Typography>
   );
 };
-

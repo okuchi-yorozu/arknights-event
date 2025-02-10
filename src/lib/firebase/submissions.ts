@@ -1,19 +1,12 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  Timestamp,
-  DocumentData,
-} from 'firebase/firestore';
-import { db } from './config';
 import { Submission } from '@/types/submission';
+import { Timestamp, addDoc, collection, getDocs, orderBy, query } from 'firebase/firestore';
+
+import { db } from './config';
 
 const COLLECTION_NAME = 'submissions';
 
 export const createSubmission = async (data: Omit<Submission, 'id' | 'createdAt'>) => {
-  console.log({data})
+  console.log({ data });
   try {
     const submissionData = {
       ...data,
@@ -36,7 +29,7 @@ export const getSubmissions = async (): Promise<Submission[]> => {
   try {
     const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
-    
+
     return querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {

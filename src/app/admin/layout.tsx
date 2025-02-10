@@ -6,11 +6,7 @@ export const metadata = {
   description: '投稿された攻略動画の管理画面です',
 };
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <ConfigProvider
       locale={jaJP}

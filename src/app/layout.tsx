@@ -20,7 +20,7 @@ export const metadata = {
 };
 
 const RootLayout = ({ children }: React.PropsWithChildren) => (
-  <html lang="ja">
+  <html lang='ja'>
     <body className={notoSansJP.className}>
       <AntdRegistry>
         <ConfigProvider

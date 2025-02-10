@@ -7,11 +7,11 @@ import { FormInput } from '../atoms';
 export const TwitterField = () => {
   return (
     <Form.Item
-      label="Twitterアカウント名"
-      name="twitterHandle"
+      label='Twitterアカウント名'
+      name='twitterHandle'
       rules={[{ validator: validateTwitterHandle }]}
     >
-      <FormInput placeholder="@username" />
+      <FormInput placeholder='@username' />
     </Form.Item>
   );
 };

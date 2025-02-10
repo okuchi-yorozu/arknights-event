@@ -6,7 +6,12 @@ export interface Submission {
   stage: string;
   difficulty: 'normal' | 'challenge';
   twitterHandle?: string;
-  doctorHistory: 'less-than-6months' | '6months-1year' | '1-2years' | '2-3years' | 'more-than-3years';
+  doctorHistory:
+    | 'less-than-6months'
+    | '6months-1year'
+    | '1-2years'
+    | '2-3years'
+    | 'more-than-3years';
   introduction?: string;
   createdAt: Date;
 }

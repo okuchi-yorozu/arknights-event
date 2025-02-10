@@ -1,19 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { Form, message, Modal, Descriptions, Tag } from 'antd';
-import { FormButton } from '../atoms';
-import {
-  YoutubeUrlField,
-  ConceptField,
-  EditingField,
-  StageFields,
-  TwitterField,
-  DoctorHistoryField,
-  IntroductionField,
-} from '../molecules';
 import { createSubmission } from '@/lib/firebase/submissions';
 import type { Submission } from '@/types/submission';
+
+import { useState } from 'react';
+
+import { Descriptions, Form, Modal, Tag, message } from 'antd';
+
+import { FormButton } from '../atoms';
+import {
+  ConceptField,
+  DoctorHistoryField,
+  EditingField,
+  IntroductionField,
+  StageFields,
+  TwitterField,
+  YoutubeUrlField,
+} from '../molecules';
 
 type FormData = Omit<Submission, 'id' | 'createdAt'>;
 
@@ -31,7 +34,7 @@ export const VideoSubmissionForm = () => {
 
   const handleConfirm = async () => {
     if (!formValues) return;
-    
+
     setIsSubmitting(true);
     try {
       await createSubmission(formValues);
@@ -60,13 +63,7 @@ export const VideoSubmissionForm = () => {
   return (
     <>
       {contextHolder}
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        size="large"
-        requiredMark
-      >
+      <Form form={form} layout='vertical' onFinish={handleSubmit} size='large' requiredMark>
         <YoutubeUrlField />
         <ConceptField />
         <EditingField />
@@ -75,71 +72,59 @@ export const VideoSubmissionForm = () => {
         <DoctorHistoryField />
         <IntroductionField />
 
-        <Form.Item className="mb-0">
-          <FormButton
-            type="primary"
-            htmlType="submit"
-            loading={isSubmitting}
-            block
-          >
+        <Form.Item className='mb-0'>
+          <FormButton type='primary' htmlType='submit' loading={isSubmitting} block>
             {isSubmitting ? '送信中...' : '投稿する'}
           </FormButton>
         </Form.Item>
       </Form>
 
       <Modal
-        title="投稿内容の確認"
+        title='投稿内容の確認'
         open={confirmModalOpen}
         onOk={handleConfirm}
         onCancel={() => setConfirmModalOpen(false)}
-        okText="投稿する"
-        cancelText="戻る"
+        okText='投稿する'
+        cancelText='戻る'
         width={800}
         confirmLoading={isSubmitting}
       >
         {formValues && (
-          <Descriptions
-            bordered
-            column={1}
-            size="small"
-            labelStyle={{ width: '150px' }}
-          >
-            <Descriptions.Item label="YouTubeのURL">
-              <a href={formValues.youtubeUrl} target="_blank" rel="noopener noreferrer">
+          <Descriptions bordered column={1} size='small' labelStyle={{ width: '150px' }}>
+            <Descriptions.Item label='YouTubeのURL'>
+              <a href={formValues.youtubeUrl} target='_blank' rel='noopener noreferrer'>
                 {formValues.youtubeUrl}
               </a>
             </Descriptions.Item>
-            <Descriptions.Item label="コンセプト">
-              <div className="whitespace-pre-wrap">{formValues.concept}</div>
+            <Descriptions.Item label='コンセプト'>
+              <div className='whitespace-pre-wrap'>{formValues.concept}</div>
             </Descriptions.Item>
-            <Descriptions.Item label="編集">
+            <Descriptions.Item label='編集'>
               {formValues.hasEditing === 'edited' ? '編集あり' : '編集なし'}
             </Descriptions.Item>
-            <Descriptions.Item label="ステージ">
-              {formValues.stage}
-            </Descriptions.Item>
-            <Descriptions.Item label="難易度">
+            <Descriptions.Item label='ステージ'>{formValues.stage}</Descriptions.Item>
+            <Descriptions.Item label='難易度'>
               <Tag color={formValues.difficulty === 'normal' ? 'blue' : 'red'}>
                 {formValues.difficulty === 'normal' ? '通常' : '強襲作戦'}
               </Tag>
             </Descriptions.Item>
             {formValues.twitterHandle && (
-              <Descriptions.Item label="X">
-                <a 
+              <Descriptions.Item label='X'>
+                <a
                   href={`https://twitter.com/${formValues.twitterHandle.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target='_blank'
+                  rel='noopener noreferrer'
                 >
                   {formValues.twitterHandle}
                 </a>
               </Descriptions.Item>
             )}
-            <Descriptions.Item label="ドクター歴">
+            <Descriptions.Item label='ドクター歴'>
               {getDoctorHistoryText(formValues.doctorHistory)}
             </Descriptions.Item>
             {formValues.introduction && (
-              <Descriptions.Item label="自己紹介・備考">
-                <div className="whitespace-pre-wrap">{formValues.introduction}</div>
+              <Descriptions.Item label='自己紹介・備考'>
+                <div className='whitespace-pre-wrap'>{formValues.introduction}</div>
               </Descriptions.Item>
             )}
           </Descriptions>

@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Table, Typography, Tag, Space, Button, Dropdown, Checkbox } from 'antd';
-import { YoutubeOutlined, SettingOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import type { MenuProps } from 'antd';
 import { getSubmissions } from '@/lib/firebase/submissions';
 import type { Submission } from '@/types/submission';
+import { SettingOutlined, YoutubeOutlined } from '@ant-design/icons';
 import '@ant-design/v5-patch-for-react-19';
+
+import { useEffect, useState } from 'react';
+
+import { Button, Checkbox, Dropdown, Space, Table, Tag, Typography } from 'antd';
+import type { MenuProps } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 
 const { Title, Paragraph } = Typography;
 
@@ -75,11 +77,11 @@ export default function AdminPage() {
       dataIndex: 'youtubeUrl',
       key: 'youtubeUrl',
       render: (url: string) => (
-        <a 
-          href={url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-[#FF0000] hover:text-[#FF0000] hover:opacity-80 text-2xl"
+        <a
+          href={url}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-[#FF0000] hover:text-[#FF0000] hover:opacity-80 text-2xl'
         >
           <YoutubeOutlined />
         </a>
@@ -93,12 +95,12 @@ export default function AdminPage() {
       key: 'concept',
       render: (text: string) => (
         <Paragraph
-          ellipsis={{ 
+          ellipsis={{
             rows: 3,
             expandable: true,
-            symbol: 'もっと見る'
+            symbol: 'もっと見る',
           }}
-          className="whitespace-pre-wrap mb-0"
+          className='whitespace-pre-wrap mb-0'
         >
           {text}
         </Paragraph>
@@ -116,7 +118,7 @@ export default function AdminPage() {
       title: 'ステージ',
       dataIndex: 'stage',
       key: 'stage',
-      filters: Array.from(new Set(submissions.map(s => s.stage))).map(stage => ({
+      filters: Array.from(new Set(submissions.map((s) => s.stage))).map((stage) => ({
         text: stage,
         value: stage,
       })),
@@ -139,19 +141,21 @@ export default function AdminPage() {
       title: 'X',
       dataIndex: 'twitterHandle',
       key: 'twitterHandle',
-      render: (handle: string | undefined) => 
+      render: (handle: string | undefined) =>
         handle ? (
-          <a 
+          <a
             href={`https://twitter.com/${handle.replace('@', '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:opacity-80"
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:opacity-80'
           >
-            <Space align="center">
+            <Space align='center'>
               <span>{handle}</span>
             </Space>
           </a>
-        ) : '-',
+        ) : (
+          '-'
+        ),
       width: 200,
     },
     {
@@ -172,7 +176,7 @@ export default function AdminPage() {
     },
   ];
 
-  const columnSettings: MenuProps['items'] = allColumns.map(column => ({
+  const columnSettings: MenuProps['items'] = allColumns.map((column) => ({
     key: column.key as string,
     label: (
       <Checkbox
@@ -181,7 +185,7 @@ export default function AdminPage() {
           if (e.target.checked) {
             setVisibleColumns([...visibleColumns, column.key as string]);
           } else {
-            setVisibleColumns(visibleColumns.filter(key => key !== column.key));
+            setVisibleColumns(visibleColumns.filter((key) => key !== column.key));
           }
         }}
       >
@@ -190,29 +194,23 @@ export default function AdminPage() {
     ),
   }));
 
-  const visibleColumnsList = allColumns.filter(column => 
+  const visibleColumnsList = allColumns.filter((column) =>
     visibleColumns.includes(column.key as string)
   );
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <Title level={2} className="!mb-0">
+    <main className='min-h-screen p-8'>
+      <div className='max-w-7xl mx-auto'>
+        <div className='flex justify-between items-center mb-8'>
+          <Title level={2} className='!mb-0'>
             投稿一覧
           </Title>
-          <Space size="middle">
-            <Tag color="blue" className="text-lg px-4 py-1">
+          <Space size='middle'>
+            <Tag color='blue' className='text-lg px-4 py-1'>
               投稿件数: {submissions.length}件
             </Tag>
-            <Dropdown
-              menu={{ items: columnSettings }}
-              trigger={['click']}
-              placement="bottomRight"
-            >
-              <Button icon={<SettingOutlined />}>
-                表示カラム設定
-              </Button>
+            <Dropdown menu={{ items: columnSettings }} trigger={['click']} placement='bottomRight'>
+              <Button icon={<SettingOutlined />}>表示カラム設定</Button>
             </Dropdown>
           </Space>
         </div>
@@ -220,11 +218,11 @@ export default function AdminPage() {
           columns={visibleColumnsList}
           dataSource={submissions}
           loading={loading}
-          rowKey="id"
+          rowKey='id'
           scroll={{ x: 1500 }}
           expandable={{
             expandedRowRender: (record) => (
-              <p className="p-4">{record.introduction || '自己紹介・備考なし'}</p>
+              <p className='p-4'>{record.introduction || '自己紹介・備考なし'}</p>
             ),
             rowExpandable: (record) => Boolean(record.introduction),
           }}
