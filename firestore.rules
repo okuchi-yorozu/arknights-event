@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /submissions/{submission} {
+      // 基本的なアクセス制御
+      allow read: if true;  // 読み取りは許可
+      
+      // 作成時のバリデーション
+      allow create: if
+        // 必須フィールドの存在確認
+        request.resource.data.keys().hasAll(['youtubeUrl', 'concept', 'hasEditing', 'stage', 'difficulty', 'doctorHistory']) &&
+        // タイムスタンプの検証
+        request.resource.data.createdAt is timestamp &&
+        // データ型の検証
+        request.resource.data.youtubeUrl is string &&
+        request.resource.data.concept is string &&
+        request.resource.data.hasEditing in ['edited', 'raw'] &&
+        request.resource.data.stage is string &&
+        request.resource.data.difficulty in ['normal', 'challenge'] &&
+        request.resource.data.doctorHistory in ['less-than-6months', '6months-1year', '1-2years', '2-3years', 'more-than-3years'];
+      
+      // 更新と削除は禁止
+      allow update, delete: if false;
+    }
+  }
+}

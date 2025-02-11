@@ -1,24 +1,21 @@
-import { Submission } from '@/types/submission';
-import { Timestamp, addDoc, collection, getDocs, orderBy, query } from 'firebase/firestore';
-
-import { db } from './config';
-
-const COLLECTION_NAME = 'submissions';
+import type { Submission } from '@/types/submission';
 
 export const createSubmission = async (data: Omit<Submission, 'id' | 'createdAt'>) => {
-  console.log({ data });
   try {
-    const submissionData = {
-      ...data,
-      createdAt: Timestamp.now(),
-    };
+    const response = await fetch('/api/submissions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-    const docRef = await addDoc(collection(db, COLLECTION_NAME), submissionData);
-    return {
-      id: docRef.id,
-      ...data,
-      createdAt: new Date(),
-    };
+    if (!response.ok) {
+      throw new Error('Failed to create submission');
+    }
+
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error('Error creating submission:', error);
     throw error;
@@ -27,17 +24,16 @@ export const createSubmission = async (data: Omit<Submission, 'id' | 'createdAt'
 
 export const getSubmissions = async (): Promise<Submission[]> => {
   try {
-    const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
+    const response = await fetch('/api/submissions');
+    if (!response.ok) {
+      throw new Error('Failed to get submissions');
+    }
 
-    return querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: (data.createdAt as Timestamp).toDate(),
-      } as Submission;
-    });
+    const submissions = await response.json();
+    return submissions.map((submission: any) => ({
+      ...submission,
+      createdAt: new Date(submission.createdAt),
+    }));
   } catch (error) {
     console.error('Error getting submissions:', error);
     throw error;
