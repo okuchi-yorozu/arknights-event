@@ -30,7 +30,7 @@ export const getSubmissions = async (): Promise<Submission[]> => {
     }
 
     const submissions = await response.json();
-    return submissions.map((submission: any) => ({
+    return submissions.map((submission: Submission) => ({
       ...submission,
       createdAt: new Date(submission.createdAt),
     }));
