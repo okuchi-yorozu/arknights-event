@@ -11,18 +11,20 @@ import { Button, Checkbox, Dropdown, Space, Table, Tag, Typography } from 'antd'
 import type { MenuProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
-const { Title, Paragraph } = Typography;
+import { getTwitterIconUrl } from '@/utils/twitter';
+
+const { Title } = Typography;
 
 const DEFAULT_VISIBLE_COLUMNS = [
   'index',
-  'createdAt',
-  'youtubeUrl',
-  'concept',
-  'hasEditing',
-  'stage',
-  'difficulty',
   'twitterHandle',
   'doctorHistory',
+  'stage',
+  'difficulty',
+  'concept',
+  'hasEditing',
+  'youtubeUrl',
+  'createdAt',
 ];
 
 export default function AdminPage() {
@@ -42,7 +44,7 @@ export default function AdminPage() {
         const data = await getSubmissions();
         setSubmissions(data);
       } catch (error) {
-        console.error('Error fetching submissions:', error);
+        console.error('Error getting submissions:', error);
       } finally {
         setLoading(false);
       }
@@ -59,83 +61,9 @@ export default function AdminPage() {
     {
       title: 'No',
       key: 'index',
-      width: 80,
+      width: 60,
       render: (_text, _record, index) => index + 1,
       fixed: 'left',
-    },
-    {
-      title: '投稿日時',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: Date) => date.toLocaleString(),
-      sorter: (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-      defaultSortOrder: 'descend',
-      width: 180,
-    },
-    {
-      title: 'YouTube',
-      dataIndex: 'youtubeUrl',
-      key: 'youtubeUrl',
-      render: (url: string) => (
-        <a
-          href={url}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='text-[#FF0000] hover:text-[#FF0000] hover:opacity-80 text-2xl'
-        >
-          <YoutubeOutlined />
-        </a>
-      ),
-      width: 100,
-      align: 'center',
-    },
-    {
-      title: 'コンセプト',
-      dataIndex: 'concept',
-      key: 'concept',
-      render: (text: string) => (
-        <Paragraph
-          ellipsis={{
-            rows: 3,
-            expandable: true,
-            symbol: 'もっと見る',
-          }}
-          className='whitespace-pre-wrap mb-0'
-        >
-          {text}
-        </Paragraph>
-      ),
-      width: 300,
-    },
-    {
-      title: '編集',
-      dataIndex: 'hasEditing',
-      key: 'hasEditing',
-      render: (value: string) => (value === 'edited' ? '編集あり' : '編集なし'),
-      width: 100,
-    },
-    {
-      title: 'ステージ',
-      dataIndex: 'stage',
-      key: 'stage',
-      filters: Array.from(new Set(submissions.map((s) => s.stage))).map((stage) => ({
-        text: stage,
-        value: stage,
-      })),
-      onFilter: (value, record) => record.stage === value,
-      filterSearch: true,
-      width: 120,
-    },
-    {
-      title: '難易度',
-      dataIndex: 'difficulty',
-      key: 'difficulty',
-      render: (value: string) => (
-        <Tag color={value === 'normal' ? 'blue' : 'red'}>
-          {value === 'normal' ? '通常' : '強襲作戦'}
-        </Tag>
-      ),
-      width: 100,
     },
     {
       title: 'X',
@@ -149,14 +77,15 @@ export default function AdminPage() {
             rel='noopener noreferrer'
             className='hover:opacity-80'
           >
-            <Space align='center'>
+            <Space direction='vertical' align='center'>
+              <img src={getTwitterIconUrl(handle)} />
               <span>{handle}</span>
             </Space>
           </a>
         ) : (
           '-'
         ),
-      width: 200,
+      width: 120,
     },
     {
       title: 'ドクター歴',
@@ -172,7 +101,72 @@ export default function AdminPage() {
         };
         return mapping[value] || value;
       },
-      width: 120,
+      width: 100,
+    },
+    {
+      title: 'ステージ',
+      dataIndex: 'stage',
+      key: 'stage',
+      filters: Array.from(new Set(submissions.map((s) => s.stage))).map((stage) => ({
+        text: stage,
+        value: stage,
+      })),
+      onFilter: (value, record) => record.stage === value,
+      filterSearch: true,
+      width: 100,
+    },
+    {
+      title: '難易度',
+      dataIndex: 'difficulty',
+      key: 'difficulty',
+      render: (value: string) => (
+        <Tag color={value === 'normal' ? 'blue' : 'red'}>
+          {value === 'normal' ? '通常' : '強襲作戦'}
+        </Tag>
+      ),
+      width: 90,
+    },
+    {
+      title: 'コンセプト',
+      dataIndex: 'concept',
+      key: 'concept',
+      render: (text: string) => (
+        <div className='max-h-20 overflow-y-auto whitespace-pre-wrap'>{text}</div>
+      ),
+      width: 300,
+    },
+    {
+      title: '編集',
+      dataIndex: 'hasEditing',
+      key: 'hasEditing',
+      render: (value: string) => (value === 'edited' ? '編集あり' : '編集なし'),
+      width: 80,
+    },
+    {
+      title: 'YouTube',
+      dataIndex: 'youtubeUrl',
+      key: 'youtubeUrl',
+      render: (url: string) => (
+        <a
+          href={url}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-[#FF0000] hover:text-[#FF0000] hover:opacity-80 text-2xl'
+        >
+          <YoutubeOutlined />
+        </a>
+      ),
+      width: 80,
+      align: 'center',
+    },
+    {
+      title: '応募日時',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: Date) => date.toLocaleString(),
+      sorter: (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+      defaultSortOrder: 'descend',
+      width: 150,
     },
   ];
 
@@ -203,11 +197,11 @@ export default function AdminPage() {
       <div className='max-w-7xl mx-auto'>
         <div className='flex justify-between items-center mb-8'>
           <Title level={2} className='!mb-0'>
-            投稿一覧
+            応募一覧
           </Title>
           <Space size='middle'>
             <Tag color='blue' className='text-lg px-4 py-1'>
-              投稿件数: {submissions.length}件
+              応募件数: {submissions.length}件
             </Tag>
             <Dropdown menu={{ items: columnSettings }} trigger={['click']} placement='bottomRight'>
               <Button icon={<SettingOutlined />}>表示カラム設定</Button>
@@ -219,7 +213,6 @@ export default function AdminPage() {
           dataSource={submissions}
           loading={loading}
           rowKey='id'
-          scroll={{ x: 1500 }}
           expandable={{
             expandedRowRender: (record) => (
               <p className='p-4'>{record.introduction || '自己紹介・備考なし'}</p>

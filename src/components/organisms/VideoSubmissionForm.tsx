@@ -20,7 +20,12 @@ import {
 
 type FormData = Omit<Submission, 'id' | 'createdAt'>;
 
-export const VideoSubmissionForm = () => {
+interface VideoSubmissionFormProps {
+  stages: Array<{ value: string; label: string }>;
+  defaultStage: string;
+}
+
+export const VideoSubmissionForm = ({ stages, defaultStage }: VideoSubmissionFormProps) => {
   const [form] = Form.useForm<FormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -38,11 +43,11 @@ export const VideoSubmissionForm = () => {
     setIsSubmitting(true);
     try {
       await createSubmission(formValues);
-      messageApi.success('投稿が完了しました!');
+      messageApi.success('応募が完了しました!');
       form.resetFields();
       setConfirmModalOpen(false);
     } catch (error) {
-      console.error('投稿エラー:', error);
+      console.error('応募エラー:', error);
       messageApi.error('エラーが発生しました。もう一度お試しください。');
     } finally {
       setIsSubmitting(false);
@@ -63,34 +68,41 @@ export const VideoSubmissionForm = () => {
   return (
     <>
       {contextHolder}
-      <Form form={form} layout='vertical' onFinish={handleSubmit} size='large' requiredMark>
+      <Form
+        form={form}
+        layout='vertical'
+        onFinish={handleSubmit}
+        size='large'
+        requiredMark
+        initialValues={{ hasEditing: 'raw', stage: defaultStage, difficulty: 'normal' }}
+      >
         <YoutubeUrlField />
         <ConceptField />
         <EditingField />
-        <StageFields />
+        <StageFields stages={stages} />
         <TwitterField />
         <DoctorHistoryField />
         <IntroductionField />
 
         <Form.Item className='mb-0'>
           <FormButton type='primary' htmlType='submit' loading={isSubmitting} block>
-            {isSubmitting ? '送信中...' : '投稿する'}
+            {isSubmitting ? '送信中...' : '応募する'}
           </FormButton>
         </Form.Item>
       </Form>
 
       <Modal
-        title='投稿内容の確認'
+        title='応募内容の確認'
         open={confirmModalOpen}
         onOk={handleConfirm}
         onCancel={() => setConfirmModalOpen(false)}
-        okText='投稿する'
+        okText='応募する'
         cancelText='戻る'
         width={800}
         confirmLoading={isSubmitting}
       >
         {formValues && (
-          <Descriptions bordered column={1} size='small' labelStyle={{ width: '150px' }}>
+          <Descriptions bordered column={1} size='small' styles={{ label: {} }}>
             <Descriptions.Item label='YouTubeのURL'>
               <a href={formValues.youtubeUrl} target='_blank' rel='noopener noreferrer'>
                 {formValues.youtubeUrl}

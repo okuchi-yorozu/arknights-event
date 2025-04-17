@@ -2,7 +2,16 @@ import { Form, Space } from 'antd';
 
 import { FormSelect, Option } from '../atoms';
 
-export const StageFields = () => {
+interface Stage {
+  value: string;
+  label: string;
+}
+
+interface StageFieldsProps {
+  stages: Stage[];
+}
+
+export const StageFields = ({ stages }: StageFieldsProps) => {
   return (
     <Space className='w-full gap-4'>
       <Form.Item
@@ -13,8 +22,11 @@ export const StageFields = () => {
         className='flex-1'
       >
         <FormSelect placeholder='選択してください'>
-          <Option value='as-ex-8'>AS-EX-8</Option>
-          <Option value='as-s-4'>AS-S-4</Option>
+          {stages.map((stage) => (
+            <Option key={stage.value} value={stage.value}>
+              {stage.label}
+            </Option>
+          ))}
         </FormSelect>
       </Form.Item>
 

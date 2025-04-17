@@ -2,8 +2,8 @@ import { ConfigProvider } from 'antd';
 import jaJP from 'antd/locale/ja_JP';
 
 export const metadata = {
-  title: '管理者画面 - アークナイツ攻略動画投稿',
-  description: '投稿された攻略動画の管理画面です',
+  title: '管理者画面 - アークナイツ攻略動画企画応募',
+  description: '応募された攻略動画の管理画面です',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -15,8 +15,8 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata = {
-  title: 'アークナイツ攻略動画投稿フォーム',
-  description: 'アークナイツの攻略動画を投稿するためのフォームです',
+  title: 'アークナイツ攻略動画企画応募フォーム',
+  description: 'アークナイツの攻略動画企画に応募するためのフォームです',
 };
 
 const RootLayout = ({ children }: React.PropsWithChildren) => (
