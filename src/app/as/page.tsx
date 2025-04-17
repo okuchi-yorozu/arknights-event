@@ -4,7 +4,6 @@ import '@ant-design/v5-patch-for-react-19';
 
 import { Thumbnails } from '@/components/molecules/Thumbnails';
 import { VideoSubmissionForm } from '@/components/organisms';
-import ContractCalculator from '@/components/organisms/ContractCalculator';
 import { EventSubmissionGuidelines } from '@/components/organisms/EventSubmissionGuidelines';
 import { FormLayout } from '@/components/templates';
 

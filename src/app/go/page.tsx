@@ -2,8 +2,6 @@
 
 import '@ant-design/v5-patch-for-react-19';
 
-import { useState } from 'react';
-
 import { Thumbnails } from '@/components/molecules/Thumbnails';
 import { VideoSubmissionForm } from '@/components/organisms';
 import { EventSubmissionGuidelines } from '@/components/organisms/EventSubmissionGuidelines';

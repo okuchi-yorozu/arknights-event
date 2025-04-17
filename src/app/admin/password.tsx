@@ -29,7 +29,7 @@ export const PasswordForm = ({ onSuccess }: Props) => {
       } else {
         message.error('パスワードが正しくありません');
       }
-    } catch (error) {
+    } catch {
       message.error('認証に失敗しました');
     } finally {
       setLoading(false);

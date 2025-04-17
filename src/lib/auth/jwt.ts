@@ -30,7 +30,7 @@ export const verifyToken = async (token: string): Promise<JWTPayload> => {
       throw new Error('Invalid role');
     }
     return payload as JWTPayload;
-  } catch (error) {
+  } catch {
     throw new Error('Invalid token');
   }
 };
