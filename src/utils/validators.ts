@@ -2,7 +2,7 @@ import { Rule } from 'antd/es/form';
 
 export const validateYoutubeUrl = (_: Rule, value: string) => {
   const youtubeRegex =
-    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})$/;
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})([\?&].*)?$/;
   if (!value || youtubeRegex.test(value)) {
     return Promise.resolve();
   }
