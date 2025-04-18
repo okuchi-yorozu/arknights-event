@@ -10,7 +10,7 @@ import { FormLayout } from '@/components/templates';
 export default function GOSubmissionPage() {
   return (
     <FormLayout title='イベント『落日の向こうへ』攻略動画募集'>
-      <Thumbnails />
+      <Thumbnails url="/go-ex-8.jpg" />
       <EventSubmissionGuidelines />
       <VideoSubmissionForm
         stages={[{ value: 'go-ex-8', label: 'GO-EX-8' }]}
