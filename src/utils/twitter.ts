@@ -10,9 +10,9 @@
  * @returns アイコンのURL
  */
 export const getTwitterIconUrl = (handle: string): string => {
-  // @を除去してユーザー名のみを取得
-  const username = handle.replace('@', '');
-  return `https://unavatar.io/twitter/${username}`;
+	// @を除去してユーザー名のみを取得
+	const username = handle.replace("@", "");
+	return `https://unavatar.io/twitter/${username}`;
 };
 
 /**
@@ -22,6 +22,6 @@ export const getTwitterIconUrl = (handle: string): string => {
  * @returns プロフィールのURL
  */
 export const getTwitterProfileUrl = (handle: string): string => {
-  const username = handle.replace('@', '');
-  return `https://twitter.com/${username}`;
+	const username = handle.replace("@", "");
+	return `https://twitter.com/${username}`;
 };
