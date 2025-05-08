@@ -12,7 +12,7 @@ export default function GOSubmissionPage() {
 	return (
 		<FormLayout title="イベント『幕開く者たち』攻略動画募集">
 			<Typography.Title level={3} className="text-red-600 my-6">
-5/18（木）23時〆切
+5/15（木）23時〆切
 </Typography.Title>
 			<Thumbnails url="/pv-ex-8.jpg" />
 			<EventSubmissionGuidelines />
