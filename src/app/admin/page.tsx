@@ -185,7 +185,7 @@ export default function AdminPage() {
 			dataIndex: "concept",
 			key: "concept",
 			render: (text: string) => (
-				<div className="max-h-20 overflow-y-auto whitespace-pre-wrap">
+				<div className="max-h-32 overflow-y-auto whitespace-pre-wrap">
 					{text}
 				</div>
 			),
@@ -300,7 +300,7 @@ export default function AdminPage() {
 					rowKey="id"
 					expandable={{
 						expandedRowRender: (record) => (
-							<p className="p-4">
+							<p className="p-4 whitespace-pre-wrap">
 								{record.introduction || "自己紹介・備考なし"}
 							</p>
 						),
