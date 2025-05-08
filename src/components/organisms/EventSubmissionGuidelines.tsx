@@ -14,10 +14,11 @@ export const EventSubmissionGuidelines = () => {
 			<Paragraph>
 				<ul>
 					<li>募集した動画は、後日配信で紹介（同時視聴）させていただきます</li>
+					<li>入力されたTwitterアカウント名や自己紹介は配信に載ります。匿名希望の人は書かないでね！</li>
 					<li>縛りなどは自由です（星5以下である必要はありません）</li>
 					<li>動画は10分程度が目安です</li>
 					<li>BGMは権利的に問題ないものを使ってください</li>
-					<li>
+					{/* <li>
 						任意：みんなの編成が何点か、
 						<a
 							href={`${pathname}/calculate`}
@@ -26,7 +27,7 @@ export const EventSubmissionGuidelines = () => {
 							契約計算機
 						</a>
 						で遊んでみてね！
-					</li>
+					</li> */}
 				</ul>
 			</Paragraph>
 		</Typography>
