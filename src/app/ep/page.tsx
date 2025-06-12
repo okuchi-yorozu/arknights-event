@@ -8,20 +8,17 @@ import { VideoSubmissionForm } from "@/components/organisms";
 import { EventSubmissionGuidelines } from "@/components/organisms/EventSubmissionGuidelines";
 import { FormLayout } from "@/components/templates";
 
-export default function GOSubmissionPage() {
+export default function EPSubmissionPage() {
 	return (
-		<FormLayout title="イベント『幕開く者たち』攻略動画募集">
+		<FormLayout title="イベント『白海の彼方へ』攻略動画募集">
 			<Typography.Title level={3} className="text-red-600 my-6">
-				5/15（木）23時〆切
+				6/19（木）23時〆切
 			</Typography.Title>
-			<Thumbnails url="/pv-ex-8.jpg" />
+			<Thumbnails url="/ep-ex-8.jpg" />
 			<EventSubmissionGuidelines />
 			<VideoSubmissionForm
-				stages={[
-					{ value: "pv-ex-8", label: "PV-EX-8" },
-					{ value: "pv-s-5", label: "PV-S-5" },
-				]}
-				defaultStage="pv-ex-8"
+				stages={[{ value: "ep-ex-8", label: "EP-EX-8" }]}
+				defaultStage="ep-ex-8"
 			/>
 		</FormLayout>
 	);
