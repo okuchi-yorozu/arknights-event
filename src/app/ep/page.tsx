@@ -10,7 +10,7 @@ import { FormLayout } from "@/components/templates";
 
 export default function EPSubmissionPage() {
 	return (
-		<FormLayout title="イベント『白海の彼方へ』攻略動画募集">
+		<FormLayout title="イベント『白き海の彼方へ』攻略動画募集">
 			<Typography.Title level={3} className="text-red-600 my-6">
 				6/19（木）23時〆切
 			</Typography.Title>
