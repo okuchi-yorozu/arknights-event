@@ -2,6 +2,7 @@
 
 import "@ant-design/v5-patch-for-react-19";
 
+import eventsConfig from "../../config/events.json";
 import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Row, Tag, Typography } from "antd";
 import Image from "next/image";
@@ -17,36 +18,32 @@ interface Event {
 	hasDeadline: boolean;
 }
 
-const events: Event[] = [
-	{
-		path: "/ep",
-		title: "イベント『白き海の彼方へ』攻略動画募集",
-		thumbnail: "/ep-ex-8.jpg",
-		deadline: "6/19（木）23時〆切",
-		hasDeadline: true,
-	},
-	{
-		path: "/pv",
-		title: "イベント『幕開く者たち』攻略動画募集",
-		thumbnail: "/pv-ex-8.jpg",
-		deadline: "5/15（木）23時〆切",
-		hasDeadline: true,
-	},
-	{
-		path: "/go",
-		title: "イベント『落日の向こうへ』攻略動画募集",
-		thumbnail: "/go-ex-8.jpg",
-		deadline: null,
-		hasDeadline: false,
-	},
-	{
-		path: "/as",
-		title: "アークナイツ攻略動画企画応募フォーム",
-		thumbnail: "/as-s-4.jpeg",
-		deadline: null,
-		hasDeadline: false,
-	},
-];
+interface EventConfig {
+	id: string;
+	title: string;
+	deadline: string | null;
+	thumbnailUrl: string;
+	stages: Array<{ value: string; label: string }>;
+	defaultStage: string;
+	active: boolean;
+	calculator?: {
+		title: string;
+		fiveStarOperatorImages: string[];
+	} | null;
+}
+
+// config/events.json から動的にイベントデータを生成
+const events: Event[] = Object.values(
+	eventsConfig as Record<string, EventConfig>,
+)
+	.filter((event) => event.active)
+	.map((event) => ({
+		path: `/${event.id}`,
+		title: event.title,
+		thumbnail: event.thumbnailUrl,
+		deadline: event.deadline,
+		hasDeadline: Boolean(event.deadline),
+	}));
 
 export default function HomePage() {
 	return (
