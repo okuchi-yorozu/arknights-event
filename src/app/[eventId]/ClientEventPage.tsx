@@ -10,7 +10,21 @@ import { VideoSubmissionForm } from "@/components/organisms";
 import { EventSubmissionGuidelines } from "@/components/organisms/EventSubmissionGuidelines";
 import { FormLayout } from "@/components/templates";
 
-export default function EPSubmissionPage() {
+interface EventConfig {
+	id: string;
+	title: string;
+	deadline: string | null;
+	thumbnailUrl: string;
+	stages: Array<{ value: string; label: string }>;
+	defaultStage: string;
+	active: boolean;
+}
+
+interface ClientEventPageProps {
+	eventConfig: EventConfig;
+}
+
+export function ClientEventPage({ eventConfig }: ClientEventPageProps) {
 	return (
 		<>
 			{/* 右上のユーザーアイコン */}
@@ -26,15 +40,17 @@ export default function EPSubmissionPage() {
 				</Link>
 			</div>
 
-			<FormLayout title="イベント『白き海の彼方へ』攻略動画募集">
-				<Typography.Title level={3} className="text-red-600 my-6">
-					6/19（木）23時〆切
-				</Typography.Title>
-				<Thumbnails url="/ep-ex-8.jpg" />
+			<FormLayout title={eventConfig.title}>
+				{eventConfig.deadline && (
+					<Typography.Title level={3} className="text-red-600 my-6">
+						{eventConfig.deadline}
+					</Typography.Title>
+				)}
+				<Thumbnails url={eventConfig.thumbnailUrl} />
 				<EventSubmissionGuidelines />
 				<VideoSubmissionForm
-					stages={[{ value: "ep-ex-8", label: "EP-EX-8" }]}
-					defaultStage="ep-ex-8"
+					stages={eventConfig.stages}
+					defaultStage={eventConfig.defaultStage}
 				/>
 			</FormLayout>
 		</>
