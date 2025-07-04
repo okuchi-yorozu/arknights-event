@@ -1,26 +1,178 @@
 # Development Log Command
 
-Creates a development log file for today's date in the `docs/` directory.
+今日の開発ログファイルを作成・更新し、実際の開発内容を記録します。
 
-## Usage
+## 指示
+
+今日の日付（JST）で `docs/development-log-YYYY-MM-DD.md` ファイルを作成または更新してください。
+
+**重要：テンプレートを挿入するだけでなく、以下の作業を実行してください：**
+
+1. **最近のGitコミットを確認**して実装した機能や修正を把握
+2. **コードベースの変更を分析**して技術的な学びを特定
+3. **実際の開発内容を各セクションに記入**
+
+**ファイルが存在しない場合：**
+- 新しいファイルを作成し、テンプレートを挿入
+- 実際の開発内容を記入
+
+**ファイルが既に存在する場合：**
+- 最終更新時刻を更新
+- 新しい開発内容を追記
+
+## テンプレート
+
+```markdown
+# 開発ログ - YYYY-MM-DD
+
+作成日時: YYYY-MM-DD JST
+最終更新: YYYY-MM-DD JST
+
+## 本日の開発内容
+
+### 実装した機能・修正
+- 
+
+### 解決した問題
+- 
+
+### 進行中の作業
+- 
+
+## 技術的な学び
+
+### 新しく学んだ技術・概念
+- 
+
+### 問題解決のアプローチ
+- 
+
+### 参考になったリソース
+- 
+
+## コード変更
+
+### 新規作成したファイル
+- 
+
+### 修正したファイル
+- 
+
+### 削除したファイル
+- 
+
+## 技術スタック使用状況
+
+### Next.js 15 / React 19
+- 
+
+### Firebase
+- 
+
+### Ant Design
+- 
+
+### その他のライブラリ
+- 
+
+## パフォーマンス・品質
+
+### パフォーマンス改善
+- 
+
+### コード品質向上
+- 
+
+### テスト追加・改善
+- 
+
+## ユーザー体験
+
+### UI/UX改善
+- 
+
+### アクセシビリティ向上
+- 
+
+### エラーハンドリング改善
+- 
+
+## 学んだベストプラクティス
+
+### コード設計
+- 
+
+### セキュリティ
+- 
+
+### その他
+- 
+
+## 次回の開発予定
+
+### 優先度高
+- 
+
+### 優先度中
+- 
+
+### 優先度低
+- 
+
+## メモ・備考
+
+### 気づいたこと
+- 
+
+### 今後の課題
+- 
+
+### その他
+- 
 ```
-/dev-log
+
+## 実行手順
+
+1. **Gitコミット履歴を確認**
+   ```bash
+   git log --oneline --since="1 day ago"
+   git status
+   ```
+
+2. **最近の変更ファイルを特定**
+   ```bash
+   git diff --name-only HEAD~3..HEAD
+   ```
+
+3. **開発ログファイルを作成・更新**
+   - `docs/` ディレクトリが存在しない場合は作成
+   - 今日の日付を JST で計算
+   - テンプレートの日付部分を実際の日付に置換
+
+4. **実際の開発内容を記入**
+   - コミット履歴から「実装した機能・修正」を記入
+   - 変更されたファイルから「コード変更」セクションを更新
+   - 技術スタック使用状況を分析して記入
+   - 学んだことや次回の予定を記入
+
+## 記入例
+
+空の項目は削除せず、具体的な内容を記入してください：
+
+```markdown
+### 実装した機能・修正
+- カスタムスラッシュコマンド `/dev-log` の機能強化
+- 開発ログの自動生成機能を追加
+
+### 新規作成したファイル
+- `.claude/commands/dev-log.md` の更新
+
+### 修正したファイル
+- `docs/development-log-2025-07-04.md` の最終更新時刻を更新
+
+### Next.js 15 / React 19
+- 今日は Next.js 関連の作業なし
+
+### その他のライブラリ
+- Claude Code のカスタムコマンド機能を学習
 ```
-
-## Description
-This command creates a new development log file with the filename format `development-log-YYYY-MM-DD.md` in the `docs/` directory. The file is pre-populated with a structured template for documenting daily development work.
-
-## Template Sections
-- 本日の開発内容 (Today's Development)
-- 技術的な学び (Technical Learning)
-- コード変更 (Code Changes)
-- 技術スタック使用状況 (Tech Stack Usage)
-- パフォーマンス・品質 (Performance & Quality)
-- ユーザー体験 (User Experience)
-- 学んだベストプラクティス (Best Practices Learned)
-- 次回の開発予定 (Next Development Plans)
-
-## Notes
-- If a log file for today already exists, the command will update it with the current timestamp
-- The date is automatically calculated in JST (Japan Standard Time)
-- The `docs/` directory will be created if it doesn't exist
