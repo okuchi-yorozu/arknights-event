@@ -1,144 +1,161 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリのコードを扱う際のガイダンスを提供します。
 
-## Project Overview
+## 言語設定
 
-This is an Arknights event video submission system built with Next.js 15, React 19, and Firebase. It collects YouTube video submissions for game events and provides an admin interface for management.
+**重要**: Claude Code との対話は基本的に日本語で行い、ドキュメントや説明の出力も日本語で統一してください。コードコメントや Git コミットメッセージも日本語を使用することを推奨します。
 
-## Development Commands
+## Git・GitHub 運用ルール
+
+### プルリクエスト作成時の注意点
+
+1. **ブランチの最新化**: 作業開始前に分岐元ブランチの最新版をpullする
+2. **ブランチ命名**: GitHub Flow に則った命名規則を使用
+   - `feature/機能名-説明` （例: `feature/add-user-auth`）
+   - `fix/バグ修正-説明` （例: `fix/login-validation-error`）
+   - `docs/ドキュメント-説明` （例: `docs/update-readme`）
+3. **コミット単位**: 適切な作業単位でコミットを作成（1コミット1機能/修正）
+4. **日本語での PR**: タイトル・説明文は日本語で記述
+5. **コミットメッセージ**: 日本語で分かりやすく記述
+
+## プロジェクト概要
+
+これは Next.js 15、React 19、Firebase で構築されたアークナイツイベント攻略動画投稿システムです。ゲームイベントのYouTube動画投稿を収集し、管理者用インターフェースを提供します。
+
+## 開発コマンド
 
 ```bash
-# Start development server (with Turbopack)
+# 開発サーバーの起動（Turbopack使用）
 npm run dev
 
-# Build for production
+# 本番用ビルド
 npm run build
 
-# Start production server
+# 本番サーバーの起動
 npm run start
 
-# Code formatting (uses Biome with tab indentation)
+# コードフォーマット（Biome使用、タブインデント）
 npm run format
 
-# Linting (uses Biome)
+# リンティング（Biome使用）
 npm run lint
 
-# Format and lint combined
+# フォーマット＋リンティング
 npm run fix
 ```
 
-## Custom Commands
+## カスタムコマンド
 
 ```bash
-# Create development log for today
+# 今日の開発ログを作成
 /dev-log
 ```
 
-## High-Level Architecture
+## 高次アーキテクチャ
 
-### Technology Stack
-- **Frontend**: Next.js 15.3.1 with React 19, TypeScript
-- **UI Library**: Ant Design v5 with React 19 patch
-- **Styling**: TailwindCSS
-- **Database**: Firebase Firestore (client SDK)
-- **Authentication**: JWT-based admin auth using `jose` library
-- **Code Quality**: Biome for formatting/linting (replaces ESLint/Prettier)
+### 技術スタック
+- **フロントエンド**: Next.js 15.3.1 with React 19, TypeScript
+- **UIライブラリ**: Ant Design v5 with React 19 patch
+- **スタイリング**: TailwindCSS
+- **データベース**: Firebase Firestore (client SDK)
+- **認証**: JWT-based admin auth using `jose` library
+- **コード品質**: Biome for formatting/linting (ESLint/Prettier を置き換え)
 
-### Project Structure Patterns
+### プロジェクト構造パターン
 
-The project follows Atomic Design principles:
-- **Atoms** (`/components/atoms/`): Basic form components (FormButton, FormInput, etc.)
-- **Molecules** (`/components/molecules/`): Field components (YoutubeUrlField, ConceptField, etc.)
-- **Organisms** (`/components/organisms/`): Complex components (VideoSubmissionForm, EventSubmissionGuidelines)
-- **Templates** (`/components/templates/`): Layout components (FormLayout)
+このプロジェクトは Atomic Design の原則に従っています：
+- **Atoms** (`/components/atoms/`): 基本的なフォームコンポーネント（FormButton, FormInput, など）
+- **Molecules** (`/components/molecules/`): フィールドコンポーネント（YoutubeUrlField, ConceptField, など）
+- **Organisms** (`/components/organisms/`): 複雑なコンポーネント（VideoSubmissionForm, EventSubmissionGuidelines）
+- **Templates** (`/components/templates/`): レイアウトコンポーネント（FormLayout）
 
-### Key Architectural Decisions
+### 重要なアーキテクチャ決定
 
-1. **Server-Side Firebase Operations**: All Firebase operations go through Next.js API routes. Never access Firebase directly from client components.
+1. **サーバーサイドFirebase操作**: すべてのFirebase操作はNext.jsのAPIルートを通します。クライアントコンポーネントからFirebaseに直接アクセスしないでください。
 
-2. **Path Aliases**: Use `@/` for imports (maps to `src/`):
+2. **パスエイリアス**: インポートには `@/` を使用（`src/` にマップ）：
    ```typescript
    import { FormLayout } from "@/components/templates";
    ```
 
-3. **Dynamic Event System**: Events are managed through a centralized configuration system:
-   - Event metadata stored in `/config/events.json`
-   - Dynamic routing via `/app/[eventId]/page.tsx` and `/app/[eventId]/calculate/page.tsx`
-   - Server/Client component separation for Next.js 15 async compatibility
-   - Event images organized in `/public/events/[eventId]/`
+3. **動的イベントシステム**: イベントは中央集権的な設定システムで管理されます：
+   - イベントメタデータは `/config/events.json` に保存
+   - `/app/[eventId]/page.tsx` と `/app/[eventId]/calculate/page.tsx` による動的ルーティング
+   - Next.js 15の非同期互換性のためのサーバー/クライアントコンポーネント分離
+   - イベント画像は `/public/events/[eventId]/` に配置
 
-4. **Event Configuration Schema**: Each event in `/config/events.json` follows this structure:
+4. **イベント設定スキーマ**: `/config/events.json` の各イベントは以下の構造に従います：
    ```typescript
    {
-     id: string;                    // Event identifier (as, ep, go, pv)
-     title: string;                 // Display title
-     deadline: string | null;       // Deadline text or null
-     thumbnailUrl: string;          // Path to event image
-     stages: Array<{value: string, label: string}>;  // Available stages
-     defaultStage: string;          // Default selected stage
-     active: boolean;               // Whether event is active
-     calculator?: {                 // Optional calculator configuration
+     id: string;                    // イベント識別子（as, ep, go, pv）
+     title: string;                 // 表示タイトル
+     deadline: string | null;       // 締切テキストまたは null
+     thumbnailUrl: string;          // イベント画像のパス
+     stages: Array<{value: string, label: string}>;  // 利用可能なステージ
+     defaultStage: string;          // デフォルト選択ステージ
+     active: boolean;               // イベントがアクティブかどうか
+     calculator?: {                 // オプション：計算機設定
        title: string;
        fiveStarOperatorImages: string[];
      } | null;
    }
    ```
 
-5. **Adding New Events**: To add a new event:
-   1. Add event configuration to `/config/events.json`
-   2. Place event images in `/public/events/[eventId]/`
-   3. No code changes required - the system handles routing automatically
+5. **新しいイベントの追加**: 新しいイベントを追加するには：
+   1. `/config/events.json` にイベント設定を追加
+   2. イベント画像を `/public/events/[eventId]/` に配置
+   3. コード変更不要 - システムが自動的にルーティングを処理
 
-6. **Authentication Flow**:
-   - Admin login at `/admin/login`
-   - JWT stored in HTTP-only cookie
-   - Middleware protects `/admin/*` routes
-   - Single admin password (no user management)
+6. **認証フロー**:
+   - 管理者ログイン：`/admin/login`
+   - JWT を HTTP-only クッキーに保存
+   - ミドルウェアが `/admin/*` ルートを保護
+   - 単一管理者パスワード（ユーザー管理なし）
 
-### API Routes
+### APIルート
 
-- `POST /api/submissions` - Create new submission
-- `GET /api/submissions` - List all submissions
-- `DELETE /api/submissions/[id]` - Delete submission (admin only)
-- `POST /api/admin/auth` - Admin login
-- `GET /api/admin/auth/check` - Verify auth status
+- `POST /api/submissions` - 新しい投稿作成
+- `GET /api/submissions` - 投稿一覧取得
+- `DELETE /api/submissions/[id]` - 投稿削除（管理者のみ）
+- `POST /api/admin/auth` - 管理者ログイン
+- `GET /api/admin/auth/check` - 認証状態確認
 
-### Data Model
+### データモデル
 
-Submissions follow this structure:
+投稿は以下の構造に従います：
 ```typescript
 {
-  youtubeUrl: string;      // Required, validated YouTube URL
-  concept: string;         // Required, max 50 chars
+  youtubeUrl: string;      // 必須、検証済みYouTube URL
+  concept: string;         // 必須、最大50文字
   hasEditing: "edited" | "raw";
-  stage: string;           // Event-specific stages
+  stage: string;           // イベント固有のステージ
   difficulty: "normal" | "challenge";
-  twitterHandle?: string;  // Optional
-  doctorHistory: string;   // Experience level enum
-  introduction?: string;   // Optional, max 50 chars
+  twitterHandle?: string;  // オプション
+  doctorHistory: string;   // 経験レベル enum
+  introduction?: string;   // オプション、最大50文字
   createdAt: Date;
 }
 ```
 
-### Component Conventions
+### コンポーネント規約
 
-1. **Client Components**: Use `"use client"` directive
-2. **Ant Design Patch**: Import `@ant-design/v5-patch-for-react-19` in client components
-3. **Form Validation**: Use Ant Design Form with custom validators in `/utils/validators.ts`
-4. **Typography**: Use Ant Design Typography components for text
-5. **Error Handling**: Show user-friendly messages with Ant Design message component
+1. **クライアントコンポーネント**: `"use client"` ディレクティブを使用
+2. **Ant Design パッチ**: クライアントコンポーネントで `@ant-design/v5-patch-for-react-19` をインポート
+3. **フォームバリデーション**: Ant Design Form と `/utils/validators.ts` のカスタムバリデーターを使用
+4. **タイポグラフィ**: テキストには Ant Design Typography コンポーネントを使用
+5. **エラーハンドリング**: Ant Design message コンポーネントでユーザーフレンドリーなメッセージを表示
 
-### Firebase Security
+### Firebase セキュリティ
 
-- Firestore rules enforce create-only submissions (no client updates/deletes)
-- Required field validation at database level
-- Public read access, authenticated write access
-- Admin operations through authenticated API routes only
+- Firestore ルールは投稿の作成のみを許可（クライアント側の更新/削除は不可）
+- データベースレベルでの必須フィールドバリデーション
+- パブリック読み取りアクセス、認証済み書き込みアクセス
+- 管理者操作は認証済みAPIルートのみ
 
-### Environment Variables
+### 環境変数
 
-Required in `.env.local`:
+`.env.local` に必要：
 ```
 JWT_SECRET=your-secret-key
 NEXT_PUBLIC_FIREBASE_API_KEY=
@@ -149,10 +166,10 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
 
-### Code Style
+### コードスタイル
 
-- **Indentation**: Tabs (enforced by Biome)
-- **Quotes**: Double quotes for strings
-- **Imports**: Organized automatically by Biome
-- **Components**: Functional components with TypeScript
-- **File Naming**: PascalCase for components, camelCase for utilities
+- **インデント**: タブ（Biome によって強制）
+- **クォート**: 文字列にはダブルクォート
+- **インポート**: Biome によって自動整理
+- **コンポーネント**: TypeScript を使用した関数コンポーネント
+- **ファイル命名**: コンポーネントは PascalCase、ユーティリティは camelCase
