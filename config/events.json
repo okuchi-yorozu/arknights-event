@@ -1,0 +1,100 @@
+{
+	"as": {
+		"id": "as",
+		"title": "アークナイツ攻略動画企画応募フォーム",
+		"deadline": null,
+		"thumbnailUrl": "/events/as/as-s-4.jpeg",
+		"stages": [
+			{ "value": "as-ex-8", "label": "AS-EX-8" },
+			{ "value": "as-s-4", "label": "AS-S-4" }
+		],
+		"defaultStage": "as-ex-8",
+		"active": true,
+		"calculator": {
+			"title": "ASイベント契約計算機",
+			"fiveStarOperatorImages": [
+				"/img/operators/five_stars/エリジウム.png",
+				"/img/operators/five_stars/テキサス.png",
+				"/img/operators/five_stars/ファイヤーホイッスル.png",
+				"/img/operators/five_stars/バイソン.png",
+				"/img/operators/five_stars/フィリオプシス.png",
+				"/img/operators/five_stars/クエルクス.png",
+				"/img/operators/five_stars/シーン.png",
+				"/img/operators/five_stars/スプリア.png",
+				"/img/operators/five_stars/プロヴァンス.png",
+				"/img/operators/five_stars/ファイヤーウォッチ.png",
+				"/img/operators/five_stars/エイプリル.png",
+				"/img/operators/five_stars/ヴァラルクビン.png"
+			]
+		}
+	},
+	"ep": {
+		"id": "ep",
+		"title": "イベント『白き海の彼方へ』攻略動画募集",
+		"deadline": "6/19（木）23時〆切",
+		"thumbnailUrl": "/events/ep/ep-ex-8.jpg",
+		"stages": [
+			{ "value": "ep-ex-8", "label": "EP-EX-8" }
+		],
+		"defaultStage": "ep-ex-8",
+		"active": true,
+		"calculator": null
+	},
+	"go": {
+		"id": "go",
+		"title": "イベント『落日の向こうへ』攻略動画募集",
+		"deadline": null,
+		"thumbnailUrl": "/events/go/go-ex-8.jpg",
+		"stages": [
+			{ "value": "go-ex-8", "label": "GO-EX-8" }
+		],
+		"defaultStage": "go-ex-8",
+		"active": true,
+		"calculator": {
+			"title": "イベント『落日の向こうへ』契約計算機",
+			"fiveStarOperatorImages": [
+				"/img/operators/five_stars/エリジウム.png",
+				"/img/operators/five_stars/テキサス.png",
+				"/img/operators/five_stars/ファイヤーホイッスル.png",
+				"/img/operators/five_stars/バイソン.png",
+				"/img/operators/five_stars/フィリオプシス.png",
+				"/img/operators/five_stars/クエルクス.png",
+				"/img/operators/five_stars/シーン.png",
+				"/img/operators/five_stars/スプリア.png",
+				"/img/operators/five_stars/プロヴァンス.png",
+				"/img/operators/five_stars/ファイヤーウォッチ.png",
+				"/img/operators/five_stars/エイプリル.png",
+				"/img/operators/five_stars/ヴァラルクビン.png"
+			]
+		}
+	},
+	"pv": {
+		"id": "pv",
+		"title": "イベント『幕開く者たち』攻略動画募集",
+		"deadline": "5/15（木）23時〆切",
+		"thumbnailUrl": "/events/pv/pv-ex-8.jpg",
+		"stages": [
+			{ "value": "pv-ex-8", "label": "PV-EX-8" },
+			{ "value": "pv-s-5", "label": "PV-S-5" }
+		],
+		"defaultStage": "pv-ex-8",
+		"active": true,
+		"calculator": {
+			"title": "イベント『幕開く者たち』契約計算機",
+			"fiveStarOperatorImages": [
+				"/img/operators/five_stars/エリジウム.png",
+				"/img/operators/five_stars/テキサス.png",
+				"/img/operators/five_stars/ファイヤーホイッスル.png",
+				"/img/operators/five_stars/バイソン.png",
+				"/img/operators/five_stars/フィリオプシス.png",
+				"/img/operators/five_stars/クエルクス.png",
+				"/img/operators/five_stars/シーン.png",
+				"/img/operators/five_stars/スプリア.png",
+				"/img/operators/five_stars/プロヴァンス.png",
+				"/img/operators/five_stars/ファイヤーウォッチ.png",
+				"/img/operators/five_stars/エイプリル.png",
+				"/img/operators/five_stars/ヴァラルクビン.png"
+			]
+		}
+	}
+}
