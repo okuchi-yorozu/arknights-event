@@ -8,7 +8,9 @@
     "start": "next start",
     "format": "biome format --write src",
     "lint": "biome lint --write src",
-    "fix": "biome check --write src"
+    "fix": "biome check --write src",
+    "type-check": "tsc --noEmit",
+    "test": "npm run type-check && npm run fix"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
