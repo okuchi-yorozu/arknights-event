@@ -14,11 +14,52 @@
       "Bash(gh pr create:*)",
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(git switch:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(npm run fix:*)",
+      "Bash(npm run test:*)",
+      "Bash(echo:*)",
+      "Bash(ls:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
       "Bash(rm -r:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit(*) | Write(*) | MultiEdit(*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run fix"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit:*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run test"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"🎉 お疲れさまでした！今日もアークナイツ開発ありがとうございました！✨\""
+          }
+        ]
+      }
     ]
   }
 }
