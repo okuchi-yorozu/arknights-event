@@ -15,6 +15,7 @@
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "antd": "^5.23.4",
     "firebase": "^11.3.0",
     "framer-motion": "^12.6.5",
@@ -22,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "next": "^15.3.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

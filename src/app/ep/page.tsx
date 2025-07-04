@@ -1,7 +1,9 @@
 "use client";
 
 import "@ant-design/v5-patch-for-react-19";
-import { Typography } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { Button, Typography } from "antd";
+import Link from "next/link";
 
 import { Thumbnails } from "@/components/molecules/Thumbnails";
 import { VideoSubmissionForm } from "@/components/organisms";
@@ -10,16 +12,31 @@ import { FormLayout } from "@/components/templates";
 
 export default function EPSubmissionPage() {
 	return (
-		<FormLayout title="イベント『白き海の彼方へ』攻略動画募集">
-			<Typography.Title level={3} className="text-red-600 my-6">
-				6/19（木）23時〆切
-			</Typography.Title>
-			<Thumbnails url="/ep-ex-8.jpg" />
-			<EventSubmissionGuidelines />
-			<VideoSubmissionForm
-				stages={[{ value: "ep-ex-8", label: "EP-EX-8" }]}
-				defaultStage="ep-ex-8"
-			/>
-		</FormLayout>
+		<>
+			{/* 右上のユーザーアイコン */}
+			<div className="fixed top-4 right-4 z-10">
+				<Link href="/my-submissions">
+					<Button
+						type="primary"
+						shape="circle"
+						icon={<UserOutlined />}
+						size="large"
+						title="過去の投稿を編集する"
+					/>
+				</Link>
+			</div>
+
+			<FormLayout title="イベント『白き海の彼方へ』攻略動画募集">
+				<Typography.Title level={3} className="text-red-600 my-6">
+					6/19（木）23時〆切
+				</Typography.Title>
+				<Thumbnails url="/ep-ex-8.jpg" />
+				<EventSubmissionGuidelines />
+				<VideoSubmissionForm
+					stages={[{ value: "ep-ex-8", label: "EP-EX-8" }]}
+					defaultStage="ep-ex-8"
+				/>
+			</FormLayout>
+		</>
 	);
 }

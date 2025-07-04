@@ -4,8 +4,10 @@ import { createSubmission } from "@/lib/firebase/submissions";
 import type { Submission } from "@/types/submission";
 
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
-import { Descriptions, Form, Modal, Tag, message } from "antd";
+import { Button, Descriptions, Form, Modal, Tag, message } from "antd";
+import Link from "next/link";
 
 import { FormButton } from "../atoms";
 import {
@@ -45,8 +47,40 @@ export const VideoSubmissionForm = ({
 
 		setIsSubmitting(true);
 		try {
-			await createSubmission(formValues);
-			messageApi.success("応募が完了しました!");
+			// 編集用のキーを生成
+			const editKey = uuidv4();
+
+			// 投稿データに編集キーを追加
+			const submissionData = {
+				...formValues,
+				editKey,
+			};
+
+			const result = await createSubmission(submissionData);
+
+			// localStorageに編集キーと投稿IDを保存
+			const savedSubmissions = JSON.parse(
+				localStorage.getItem("mySubmissions") || "[]",
+			);
+			savedSubmissions.push({
+				id: result.id,
+				editKey,
+				createdAt: new Date().toISOString(),
+				concept: formValues.concept,
+			});
+			localStorage.setItem("mySubmissions", JSON.stringify(savedSubmissions));
+
+			messageApi.success(
+				<div>
+					<div className="mb-2">応募が完了しました!</div>
+					<Link href="/my-submissions">
+						<Button type="link" size="small" className="p-0">
+							過去の投稿を編集する →
+						</Button>
+					</Link>
+				</div>,
+				5, // 5秒間表示
+			);
 			form.resetFields();
 			setConfirmModalOpen(false);
 		} catch (error) {
