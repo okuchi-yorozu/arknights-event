@@ -24,6 +24,45 @@
    git pull origin main
    ```
 
+### 改良された開発フロー
+
+**作業開始時:**
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/新機能名
+```
+
+**開発中:**
+- 機能実装とドキュメント更新を含む関連変更をすべて完了
+- 追加変更は同じブランチで行わず、PR作成前に完了させる
+
+**PR作成手順:**
+```bash
+# 全ての変更をコミット・プッシュ
+git add .
+git commit -m "変更内容"
+git push origin feature/新機能名
+
+# PR作成
+gh pr create --title "タイトル" --body "説明"
+
+# PR作成直後に即座にmainに戻る
+git checkout main
+git pull origin main
+```
+
+**追加変更が必要な場合:**
+```bash
+# 新しいブランチを作成（既存のPRブランチは使わない）
+git checkout -b feature/追加変更名
+```
+
+### 注意点
+- **PR作成後の同一ブランチでの追加変更は避ける**
+- 設定ファイル変更時はコンフリクトに注意
+- こまめなmain同期でコンフリクトを予防
+
 ## プロジェクト概要
 
 これは Next.js 15、React 19、Firebase で構築されたアークナイツイベント攻略動画投稿システムです。ゲームイベントのYouTube動画投稿を収集し、管理者用インターフェースを提供します。
