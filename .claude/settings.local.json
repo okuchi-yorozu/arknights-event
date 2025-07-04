@@ -5,15 +5,18 @@
       "Bash(mkdir:*)",
       "Bash(mv:*)",
       "Bash(npm run build:*)",
+      "Bash(rm:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git checkout:*)",
       "Bash(git reset:*)",
       "Bash(git push:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": [
-      "Bash(rm:*)",
       "Bash(rm -rf:*)",
       "Bash(rm -r:*)"
     ]
