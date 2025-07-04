@@ -28,6 +28,13 @@ npm run lint
 npm run fix
 ```
 
+## Custom Commands
+
+```bash
+# Create development log for today
+/dev-log
+```
+
 ## High-Level Architecture
 
 ### Technology Stack
@@ -55,11 +62,35 @@ The project follows Atomic Design principles:
    import { FormLayout } from "@/components/templates";
    ```
 
-3. **Event Pages Pattern**: Each event (AS, EP, GO, PV) has:
-   - Main submission page: `/app/[event]/page.tsx`
-   - Calculator page: `/app/[event]/calculate/page.tsx`
+3. **Dynamic Event System**: Events are managed through a centralized configuration system:
+   - Event metadata stored in `/config/events.json`
+   - Dynamic routing via `/app/[eventId]/page.tsx` and `/app/[eventId]/calculate/page.tsx`
+   - Server/Client component separation for Next.js 15 async compatibility
+   - Event images organized in `/public/events/[eventId]/`
 
-4. **Authentication Flow**:
+4. **Event Configuration Schema**: Each event in `/config/events.json` follows this structure:
+   ```typescript
+   {
+     id: string;                    // Event identifier (as, ep, go, pv)
+     title: string;                 // Display title
+     deadline: string | null;       // Deadline text or null
+     thumbnailUrl: string;          // Path to event image
+     stages: Array<{value: string, label: string}>;  // Available stages
+     defaultStage: string;          // Default selected stage
+     active: boolean;               // Whether event is active
+     calculator?: {                 // Optional calculator configuration
+       title: string;
+       fiveStarOperatorImages: string[];
+     } | null;
+   }
+   ```
+
+5. **Adding New Events**: To add a new event:
+   1. Add event configuration to `/config/events.json`
+   2. Place event images in `/public/events/[eventId]/`
+   3. No code changes required - the system handles routing automatically
+
+6. **Authentication Flow**:
    - Admin login at `/admin/login`
    - JWT stored in HTTP-only cookie
    - Middleware protects `/admin/*` routes
