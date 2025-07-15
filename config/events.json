@@ -1,8 +1,8 @@
 {
 	"as": {
 		"id": "as",
-		"title": "アークナイツ攻略動画企画応募フォーム",
-		"deadline": null,
+		"title": "イベント『太陽すらも追い越して』攻略動画募集",
+		"deadline": "3/25（火）23時〆切",
 		"thumbnailUrl": "/events/as/as-s-4.jpeg",
 		"stages": [
 			{ "value": "as-ex-8", "label": "AS-EX-8" },
