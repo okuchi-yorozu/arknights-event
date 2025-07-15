@@ -43,7 +43,7 @@
 	"go": {
 		"id": "go",
 		"title": "イベント『落日の向こうへ』攻略動画募集",
-		"deadline": null,
+		"deadline": "4/30（水）23時〆切",
 		"thumbnailUrl": "/events/go/go-ex-8.jpg",
 		"stages": [
 			{ "value": "go-ex-8", "label": "GO-EX-8" }
