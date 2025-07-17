@@ -1,33 +1,4 @@
 {
-	"as": {
-		"id": "as",
-		"title": "イベント『太陽すらも追い越して』攻略動画募集",
-		"deadline": "3/25（火）23時〆切",
-		"thumbnailUrl": "/events/as/as-s-4.jpeg",
-		"stages": [
-			{ "value": "as-ex-8", "label": "AS-EX-8" },
-			{ "value": "as-s-4", "label": "AS-S-4" }
-		],
-		"defaultStage": "as-ex-8",
-		"active": true,
-		"calculator": {
-			"title": "ASイベント契約計算機",
-			"fiveStarOperatorImages": [
-				"/img/operators/five_stars/エリジウム.png",
-				"/img/operators/five_stars/テキサス.png",
-				"/img/operators/five_stars/ファイヤーホイッスル.png",
-				"/img/operators/five_stars/バイソン.png",
-				"/img/operators/five_stars/フィリオプシス.png",
-				"/img/operators/five_stars/クエルクス.png",
-				"/img/operators/five_stars/シーン.png",
-				"/img/operators/five_stars/スプリア.png",
-				"/img/operators/five_stars/プロヴァンス.png",
-				"/img/operators/five_stars/ファイヤーウォッチ.png",
-				"/img/operators/five_stars/エイプリル.png",
-				"/img/operators/five_stars/ヴァラルクビン.png"
-			]
-		}
-	},
 	"ep": {
 		"id": "ep",
 		"title": "イベント『白き海の彼方へ』攻略動画募集",

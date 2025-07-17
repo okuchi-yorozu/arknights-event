@@ -35,14 +35,14 @@ interface EventConfig {
 // 締切日をパースして比較用の値を返す関数
 function parseDeadline(deadline: string | null): number {
 	if (!deadline) return 0; // null の場合は最後に並ぶ
-	
+
 	// "3/25（火）23時〆切" から "3/25" を抽出
 	const match = deadline.match(/(\d+)\/(\d+)/);
 	if (!match) return 0;
-	
+
 	const month = parseInt(match[1], 10);
 	const day = parseInt(match[2], 10);
-	
+
 	// 月と日を使って比較用の値を作成（月 * 100 + 日）
 	return month * 100 + day;
 }
@@ -85,7 +85,10 @@ const activeEvents = allEvents.filter((event) => isEventActive(event.deadline));
 const pastEvents = allEvents.filter((event) => !isEventActive(event.deadline));
 
 // イベントカードを表示するコンポーネント
-function EventCard({ event, isPast = false }: { event: Event; isPast?: boolean }) {
+function EventCard({
+	event,
+	isPast = false,
+}: { event: Event; isPast?: boolean }) {
 	return (
 		<Card
 			className={`h-full [&_.ant-card-body]:px-4 [&_.ant-card-body]:py-4 transition-shadow hover:shadow-lg cursor-default ${
@@ -119,7 +122,9 @@ function EventCard({ event, isPast = false }: { event: Event; isPast?: boolean }
 				<div className="min-h-[2rem] flex items-center">
 					{event.hasDeadline && (
 						<div className="flex items-center gap-1">
-							<CalendarOutlined className={isPast ? "text-gray-400" : "text-red-500"} />
+							<CalendarOutlined
+								className={isPast ? "text-gray-400" : "text-red-500"}
+							/>
 							<Tag color={isPast ? "default" : "red"} className="text-sm">
 								{event.deadline}
 							</Tag>
@@ -164,9 +169,7 @@ export default function HomePage() {
 							<Title level={2} className="!mb-2">
 								🔥 現在進行中のイベント
 							</Title>
-							<Text type="secondary">
-								現在応募可能なイベントです
-							</Text>
+							<Text type="secondary">現在応募可能なイベントです</Text>
 						</div>
 						<Row gutter={[24, 24]} justify="center">
 							{activeEvents.map((event) => (
@@ -185,9 +188,7 @@ export default function HomePage() {
 							<Title level={2} className="!mb-2">
 								📚 過去のイベント
 							</Title>
-							<Text type="secondary">
-								過去に募集したイベントの一覧です
-							</Text>
+							<Text type="secondary">過去に募集したイベントの一覧です</Text>
 						</div>
 						<Row gutter={[24, 24]} justify="center">
 							{pastEvents.map((event) => (

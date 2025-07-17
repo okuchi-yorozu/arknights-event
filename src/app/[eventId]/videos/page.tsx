@@ -17,20 +17,20 @@ interface EventConfig {
 	} | null;
 }
 
-interface Params {
-	eventId: string;
+interface Props {
+	params: Promise<{ eventId: string }>;
 }
 
 // 締切日をパースして比較用の値を返す関数
 function parseDeadline(deadline: string | null): number {
 	if (!deadline) return 0;
-	
+
 	const match = deadline.match(/(\d+)\/(\d+)/);
 	if (!match) return 0;
-	
+
 	const month = parseInt(match[1], 10);
 	const day = parseInt(match[2], 10);
-	
+
 	return month * 100 + day;
 }
 
@@ -50,8 +50,8 @@ function isEventActive(deadline: string | null): boolean {
 	return deadlineDate >= currentDate;
 }
 
-export default async function VideosPage({ params }: { params: Params }) {
-	const { eventId } = params;
+export default async function VideosPage({ params }: Props) {
+	const { eventId } = await params;
 	const events = eventsConfig as Record<string, EventConfig>;
 	const event = events[eventId];
 

@@ -8,13 +8,7 @@ import "@ant-design/v5-patch-for-react-19";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import {
-	Button,
-	Space,
-	Table,
-	Tag,
-	Typography,
-} from "antd";
+import { Button, Space, Table, Tag, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { getTwitterIconUrl } from "@/utils/twitter";
@@ -179,9 +173,9 @@ export function VideoList({ eventId, eventTitle }: VideoListProps) {
 			<div className="flex items-center justify-between mb-8">
 				<div className="flex items-center gap-4">
 					<Link href="/">
-						<Button 
-							type="text" 
-							icon={<ArrowLeftOutlined />} 
+						<Button
+							type="text"
+							icon={<ArrowLeftOutlined />}
 							size="large"
 							className="hover:bg-gray-100"
 						>
@@ -199,7 +193,7 @@ export function VideoList({ eventId, eventTitle }: VideoListProps) {
 					投稿件数: {submissions.length}件
 				</Tag>
 			</div>
-			
+
 			<div className="bg-white rounded-lg shadow">
 				<Table
 					columns={columns}

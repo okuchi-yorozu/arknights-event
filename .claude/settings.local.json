@@ -21,7 +21,12 @@
       "Bash(npm run test:*)",
       "Bash(echo:*)",
       "Bash(ls:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot"
     ],
     "deny": [
       "Bash(rm -rf:*)",
@@ -29,6 +34,7 @@
       "Read(.env*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "playwright"
   ],
@@ -82,6 +88,5 @@
         ]
       }
     ]
-  },
-  "enableAllProjectMcpServers": true
+  }
 }
