@@ -104,9 +104,9 @@ function EventCard({ event, isPast = false }: { event: Event; isPast?: boolean }
 			}
 			actions={[
 				<div key="apply" className="mx-4">
-					<Link href={event.path}>
+					<Link href={isPast ? `${event.path}/videos` : event.path}>
 						<Button type={isPast ? "default" : "primary"} block>
-							{isPast ? "詳細を見る" : "応募ページへ"}
+							{isPast ? "動画一覧を見る" : "応募ページへ"}
 						</Button>
 					</Link>
 				</div>,
