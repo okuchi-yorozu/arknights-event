@@ -32,6 +32,21 @@ interface EventConfig {
 	} | null;
 }
 
+// 締切日をパースして比較用の値を返す関数
+function parseDeadline(deadline: string | null): number {
+	if (!deadline) return 0; // null の場合は最後に並ぶ
+	
+	// "3/25（火）23時〆切" から "3/25" を抽出
+	const match = deadline.match(/(\d+)\/(\d+)/);
+	if (!match) return 0;
+	
+	const month = parseInt(match[1], 10);
+	const day = parseInt(match[2], 10);
+	
+	// 月と日を使って比較用の値を作成（月 * 100 + 日）
+	return month * 100 + day;
+}
+
 // config/events.json から動的にイベントデータを生成
 const events: Event[] = Object.values(
 	eventsConfig as Record<string, EventConfig>,
@@ -43,7 +58,11 @@ const events: Event[] = Object.values(
 		thumbnail: event.thumbnailUrl,
 		deadline: event.deadline,
 		hasDeadline: Boolean(event.deadline),
-	}));
+	}))
+	.sort((a, b) => {
+		// 締切日の降順でソート（最新の締切日が最初）
+		return parseDeadline(b.deadline) - parseDeadline(a.deadline);
+	});
 
 export default function HomePage() {
 	return (
@@ -98,7 +117,7 @@ export default function HomePage() {
 								]}
 							>
 								<div className="space-y-2">
-									<div className="text-base font-medium leading-relaxed whitespace-normal break-words">
+									<div className="text-base font-medium leading-relaxed line-clamp-2 min-h-[3rem]">
 										{event.title}
 									</div>
 									<div className="min-h-[2rem] flex items-center">
