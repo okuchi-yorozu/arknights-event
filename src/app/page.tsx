@@ -2,7 +2,8 @@
 
 import "@ant-design/v5-patch-for-react-19";
 
-import eventsConfig from "../../config/events.json";
+import { useEvents } from "@/hooks/useEventData";
+import type { ProcessedEvent } from "@/types/events";
 import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Row, Tag, Typography } from "antd";
 import Image from "next/image";
@@ -10,85 +11,11 @@ import Link from "next/link";
 
 const { Title, Text } = Typography;
 
-interface Event {
-	path: string;
-	title: string;
-	thumbnail: string;
-	deadline: string | null;
-	hasDeadline: boolean;
-}
-
-interface EventConfig {
-	id: string;
-	title: string;
-	deadline: string | null;
-	thumbnailUrl: string;
-	stages: Array<{ value: string; label: string }>;
-	defaultStage: string;
-	active: boolean;
-	calculator?: {
-		title: string;
-		fiveStarOperatorImages: string[];
-	} | null;
-}
-
-// 締切日をパースして比較用の値を返す関数
-function parseDeadline(deadline: string | null): number {
-	if (!deadline) return 0; // null の場合は最後に並ぶ
-
-	// "3/25（火）23時〆切" から "3/25" を抽出
-	const match = deadline.match(/(\d+)\/(\d+)/);
-	if (!match) return 0;
-
-	const month = parseInt(match[1], 10);
-	const day = parseInt(match[2], 10);
-
-	// 月と日を使って比較用の値を作成（月 * 100 + 日）
-	return month * 100 + day;
-}
-
-// 現在日付を取得して比較用の値を返す関数
-function getCurrentDate(): number {
-	const now = new Date();
-	const month = now.getMonth() + 1; // 0から始まるため+1
-	const day = now.getDate();
-	return month * 100 + day;
-}
-
-// 締切日が現在日付より後かどうかを判定する関数
-function isEventActive(deadline: string | null): boolean {
-	if (!deadline) return false;
-	const currentDate = getCurrentDate();
-	const deadlineDate = parseDeadline(deadline);
-	return deadlineDate >= currentDate;
-}
-
-// config/events.json から動的にイベントデータを生成
-const allEvents: Event[] = Object.values(
-	eventsConfig as Record<string, EventConfig>,
-)
-	.filter((event) => event.active)
-	.map((event) => ({
-		path: `/${event.id}`,
-		title: event.title,
-		thumbnail: event.thumbnailUrl,
-		deadline: event.deadline,
-		hasDeadline: Boolean(event.deadline),
-	}))
-	.sort((a, b) => {
-		// 締切日の降順でソート（最新の締切日が最初）
-		return parseDeadline(b.deadline) - parseDeadline(a.deadline);
-	});
-
-// 現在進行中のイベントと過去のイベントに分類
-const activeEvents = allEvents.filter((event) => isEventActive(event.deadline));
-const pastEvents = allEvents.filter((event) => !isEventActive(event.deadline));
-
 // イベントカードを表示するコンポーネント
 function EventCard({
 	event,
 	isPast = false,
-}: { event: Event; isPast?: boolean }) {
+}: { event: ProcessedEvent; isPast?: boolean }) {
 	return (
 		<Card
 			className={`h-full [&_.ant-card-body]:px-4 [&_.ant-card-body]:py-4 transition-shadow hover:shadow-lg cursor-default ${
@@ -97,7 +24,7 @@ function EventCard({
 			cover={
 				<div className="relative aspect-video bg-gray-100">
 					<Image
-						src={event.thumbnail}
+						src={event.thumbnailUrl}
 						alt={event.title}
 						fill
 						className="object-cover"
@@ -137,6 +64,7 @@ function EventCard({
 }
 
 export default function HomePage() {
+	const { active: activeEvents, past: pastEvents } = useEvents();
 	return (
 		<main className="min-h-screen bg-gray-50">
 			{/* 右上のユーザーアイコン */}
