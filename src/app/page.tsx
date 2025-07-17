@@ -75,8 +75,7 @@ export default function HomePage() {
 					{events.map((event) => (
 						<Col key={event.path} xs={24} sm={12} lg={8} xl={6}>
 							<Card
-								hoverable
-								className="h-full [&_.ant-card-body]:px-4 [&_.ant-card-body]:py-4"
+								className="h-full [&_.ant-card-body]:px-4 [&_.ant-card-body]:py-4 transition-shadow hover:shadow-lg cursor-default"
 								cover={
 									<div className="relative aspect-video bg-gray-100">
 										<Image
