@@ -1,11 +1,11 @@
 "use client";
 
-import { getSubmissions } from "@/lib/firebase/submissions";
+import { getSubmissionsAction } from "@/lib/actions/submissions";
 import type { Submission } from "@/types/submission";
 import { YoutubeOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import "@ant-design/v5-patch-for-react-19";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useOptimistic, useTransition } from "react";
 import Link from "next/link";
 
 import { Button, Space, Table, Tag, Typography } from "antd";
@@ -22,28 +22,46 @@ interface VideoListProps {
 
 export function VideoList({ eventId, eventTitle }: VideoListProps) {
 	const [submissions, setSubmissions] = useState<Submission[]>([]);
-	const [loading, setLoading] = useState(true);
+	const [isPending, startTransition] = useTransition();
+
+	// React 19のuseOptimisticで楽観的UI更新を実装
+	const [optimisticSubmissions, addOptimisticSubmission] = useOptimistic(
+		submissions,
+		(currentSubmissions, newSubmission: Submission) => {
+			// 新しい投稿を楽観的に追加（一番上に表示）
+			return [newSubmission, ...currentSubmissions];
+		}
+	);
 
 	useEffect(() => {
 		const fetchSubmissions = async () => {
-			try {
-				const allSubmissions = await getSubmissions();
-				// イベントIDに基づいてフィルタリング
-				// stageからイベントIDを判定する（例：as-ex-8 → as）
-				const eventSubmissions = allSubmissions.filter((submission) => {
-					const stagePrefix = submission.stage.split("-")[0];
-					return stagePrefix === eventId;
-				});
-				setSubmissions(eventSubmissions);
-			} catch (error) {
-				console.error("Error getting submissions:", error);
-			} finally {
-				setLoading(false);
-			}
+			startTransition(async () => {
+				try {
+					const allSubmissions = await getSubmissionsAction();
+					// イベントIDに基づいてフィルタリング
+					// stageからイベントIDを判定する（例：as-ex-8 → as）
+					const eventSubmissions = allSubmissions.filter((submission) => {
+						const stagePrefix = submission.stage.split("-")[0];
+						return stagePrefix === eventId;
+					});
+					setSubmissions(eventSubmissions);
+				} catch (error) {
+					console.error("Error getting submissions:", error);
+				}
+			});
 		};
 
 		fetchSubmissions();
 	}, [eventId]);
+
+	// 楽観的投稿を追加するメソッド（例：新しい投稿が追加されたとき）
+	const handleOptimisticAdd = (newSubmission: Submission) => {
+		// 現在のイベントの投稿のみ楽観的追加
+		const stagePrefix = newSubmission.stage.split("-")[0];
+		if (stagePrefix === eventId) {
+			addOptimisticSubmission(newSubmission);
+		}
+	};
 
 	const columns: ColumnsType<Submission> = [
 		{
@@ -99,8 +117,8 @@ export function VideoList({ eventId, eventTitle }: VideoListProps) {
 			dataIndex: "stage",
 			key: "stage",
 			filters:
-				submissions.length > 0
-					? Array.from(new Set(submissions.map((s) => s.stage))).map(
+				optimisticSubmissions.length > 0
+					? Array.from(new Set(optimisticSubmissions.map((s) => s.stage))).map(
 							(stage) => ({
 								text: stage,
 								value: stage,
@@ -190,15 +208,16 @@ export function VideoList({ eventId, eventTitle }: VideoListProps) {
 					</div>
 				</div>
 				<Tag color="blue" className="text-lg px-4 py-1">
-					投稿件数: {submissions.length}件
+					投稿件数: {optimisticSubmissions.length}件
+					{isPending && " (更新中...)"}
 				</Tag>
 			</div>
 
 			<div className="bg-white rounded-lg shadow">
 				<Table
 					columns={columns}
-					dataSource={submissions}
-					loading={loading}
+					dataSource={optimisticSubmissions}
+					loading={isPending}
 					rowKey="id"
 					expandable={{
 						expandedRowRender: (record) => (

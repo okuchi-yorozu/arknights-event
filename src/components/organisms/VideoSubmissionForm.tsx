@@ -1,10 +1,10 @@
 "use client";
 
-import { createSubmission } from "@/lib/firebase/submissions";
+import { createSubmissionAction } from "@/lib/actions/submissions";
 import type { Submission } from "@/types/submission";
+import type { SubmissionFormState } from "@/lib/actions/submissions";
 
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useActionState, useEffect } from "react";
 
 import { Button, Descriptions, Form, Modal, Tag, message } from "antd";
 import Link from "next/link";
@@ -20,7 +20,7 @@ import {
 	YoutubeUrlField,
 } from "../molecules";
 
-type FormData = Omit<Submission, "id" | "createdAt">;
+type FormData = Omit<Submission, "id" | "createdAt" | "editKey">;
 
 interface VideoSubmissionFormProps {
 	stages: Array<{ value: string; label: string }>;
@@ -32,41 +32,26 @@ export const VideoSubmissionForm = ({
 	defaultStage,
 }: VideoSubmissionFormProps) => {
 	const [form] = Form.useForm<FormData>();
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [messageApi, contextHolder] = message.useMessage();
-	const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-	const [formValues, setFormValues] = useState<FormData | null>(null);
+	
+	// React 19のuseActionStateを使用してフォーム状態管理を統合
+	const [state, submitAction, isPending] = useActionState(
+		createSubmissionAction,
+		{ success: false }
+	);
 
-	const handleSubmit = async (values: FormData) => {
-		setFormValues(values);
-		setConfirmModalOpen(true);
-	};
-
-	const handleConfirm = async () => {
-		if (!formValues) return;
-
-		setIsSubmitting(true);
-		try {
-			// 編集用のキーを生成
-			const editKey = uuidv4();
-
-			// 投稿データに編集キーを追加
-			const submissionData = {
-				...formValues,
-				editKey,
-			};
-
-			const result = await createSubmission(submissionData);
-
+	// useActionStateの結果に応じてUIフィードバックを表示
+	useEffect(() => {
+		if (state.success && state.submission) {
 			// localStorageに編集キーと投稿IDを保存
 			const savedSubmissions = JSON.parse(
 				localStorage.getItem("mySubmissions") || "[]",
 			);
 			savedSubmissions.push({
-				id: result.id,
-				editKey,
+				id: state.submission.id,
+				editKey: state.submission.editKey,
 				createdAt: new Date().toISOString(),
-				concept: formValues.concept,
+				concept: state.submission.concept,
 			});
 			localStorage.setItem("mySubmissions", JSON.stringify(savedSubmissions));
 
@@ -82,13 +67,14 @@ export const VideoSubmissionForm = ({
 				5, // 5秒間表示
 			);
 			form.resetFields();
-			setConfirmModalOpen(false);
-		} catch (error) {
-			console.error("応募エラー:", error);
-			messageApi.error("エラーが発生しました。もう一度お試しください。");
-		} finally {
-			setIsSubmitting(false);
+		} else if (state.error) {
+			messageApi.error(state.error);
 		}
+	}, [state, messageApi, form]);
+
+	// Server Actionを使用したフォーム送信
+	const handleSubmit = async (values: FormData) => {
+		submitAction(values);
 	};
 
 	const getDoctorHistoryText = (value: string) => {
@@ -129,73 +115,15 @@ export const VideoSubmissionForm = ({
 					<FormButton
 						type="primary"
 						htmlType="submit"
-						loading={isSubmitting}
+						loading={isPending}
 						block
 					>
-						{isSubmitting ? "送信中..." : "応募する"}
+						{isPending ? "送信中..." : "応募する"}
 					</FormButton>
 				</Form.Item>
 			</Form>
 
-			<Modal
-				title="応募内容の確認"
-				open={confirmModalOpen}
-				onOk={handleConfirm}
-				onCancel={() => setConfirmModalOpen(false)}
-				okText="応募する"
-				cancelText="戻る"
-				width={800}
-				confirmLoading={isSubmitting}
-			>
-				{formValues && (
-					<Descriptions bordered column={1} size="small" styles={{ label: {} }}>
-						<Descriptions.Item label="YouTubeのURL">
-							<a
-								href={formValues.youtubeUrl}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								{formValues.youtubeUrl}
-							</a>
-						</Descriptions.Item>
-						<Descriptions.Item label="コンセプト">
-							<div className="whitespace-pre-wrap">{formValues.concept}</div>
-						</Descriptions.Item>
-						<Descriptions.Item label="編集">
-							{formValues.hasEditing === "edited" ? "編集あり" : "編集なし"}
-						</Descriptions.Item>
-						<Descriptions.Item label="ステージ">
-							{formValues.stage}
-						</Descriptions.Item>
-						<Descriptions.Item label="難易度">
-							<Tag color={formValues.difficulty === "normal" ? "blue" : "red"}>
-								{formValues.difficulty === "normal" ? "通常" : "強襲作戦"}
-							</Tag>
-						</Descriptions.Item>
-						{formValues.twitterHandle && (
-							<Descriptions.Item label="X">
-								<a
-									href={`https://twitter.com/${formValues.twitterHandle.replace("@", "")}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{formValues.twitterHandle}
-								</a>
-							</Descriptions.Item>
-						)}
-						<Descriptions.Item label="ドクター歴">
-							{getDoctorHistoryText(formValues.doctorHistory)}
-						</Descriptions.Item>
-						{formValues.introduction && (
-							<Descriptions.Item label="自己紹介・備考">
-								<div className="whitespace-pre-wrap">
-									{formValues.introduction}
-								</div>
-							</Descriptions.Item>
-						)}
-					</Descriptions>
-				)}
-			</Modal>
+			{/* React 19のuseActionStateを使用したため、確認モーダルは不要になり、直接送信する */}
 		</>
 	);
 };

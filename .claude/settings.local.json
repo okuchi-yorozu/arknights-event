@@ -26,7 +26,12 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_click",
-      "mcp__playwright__browser_snapshot"
+      "mcp__playwright__browser_snapshot",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

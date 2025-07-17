@@ -28,8 +28,8 @@ function parseDeadline(deadline: string | null): number {
 	const match = deadline.match(/(\d+)\/(\d+)/);
 	if (!match) return 0;
 
-	const month = parseInt(match[1], 10);
-	const day = parseInt(match[2], 10);
+	const month = Number.parseInt(match[1], 10);
+	const day = Number.parseInt(match[2], 10);
 
 	return month * 100 + day;
 }
