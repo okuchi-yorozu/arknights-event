@@ -63,6 +63,7 @@ git checkout -b feature/追加変更名
 - **PR作成後の同一ブランチでの追加変更は避ける**
 - **設定ファイル変更時はコンフリクトに注意**（`.claude/settings.local.json` など）
 - **作業開始前のブランチ最新化を必須とする**
+- **GitHubでPRを作るときは、新しいブランチを作成し、ファイルをstagingに上げてコミットしてください。PRを作り終わったらmainブランチに戻ってください**
 
 ## プロジェクト概要
 
@@ -218,3 +219,4 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 - **インポート**: Biome によって自動整理
 - **コンポーネント**: TypeScript を使用した関数コンポーネント
 - **ファイル命名**: コンポーネントは PascalCase、ユーティリティは camelCase
+```

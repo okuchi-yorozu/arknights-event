@@ -40,6 +40,30 @@
 		"active": true,
 		"calculator": null
 	},
+	"or-ex": {
+		"id": "or-ex",
+		"title": "イベント『相見歓』EX攻略動画募集",
+		"deadline": "7/31（木）23時〆切",
+		"thumbnailUrl": "/events/or/or-ex-8.jpg",
+		"stages": [
+			{ "value": "or-ex-8", "label": "OR-EX-8" }
+		],
+		"defaultStage": "or-ex-8",
+		"active": true,
+		"calculator": null
+	},
+	"or-s": {
+		"id": "or-s",
+		"title": "イベント『相見歓』S攻略動画募集",
+		"deadline": "8/7（木）23時〆切",
+		"thumbnailUrl": "/events/or/or-s-8.jpg",
+		"stages": [
+			{ "value": "or-s-8", "label": "OR-S-8" }
+		],
+		"defaultStage": "or-s-8",
+		"active": true,
+		"calculator": null
+	},
 	"go": {
 		"id": "go",
 		"title": "イベント『落日の向こうへ』攻略動画募集",
