@@ -1,7 +1,7 @@
 "use client";
 
-import { LockOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, Typography, Card } from "antd";
+import { ArrowLeftOutlined, LockOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
 import Link from "next/link";
 
 const { Title, Paragraph } = Typography;

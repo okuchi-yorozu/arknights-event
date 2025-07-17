@@ -1,11 +1,10 @@
 "use client";
 
-import { getSubmissions } from "@/lib/firebase/submissions";
+import { useSubmissions } from "@/hooks/useSubmissions";
 import type { Submission } from "@/types/submission";
-import { YoutubeOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, YoutubeOutlined } from "@ant-design/icons";
 import "@ant-design/v5-patch-for-react-19";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Button, Space, Table, Tag, Typography } from "antd";
@@ -21,29 +20,19 @@ interface VideoListProps {
 }
 
 export function VideoList({ eventId, eventTitle }: VideoListProps) {
-	const [submissions, setSubmissions] = useState<Submission[]>([]);
-	const [loading, setLoading] = useState(true);
+	const { submissions, loading, error } = useSubmissions(eventId);
 
-	useEffect(() => {
-		const fetchSubmissions = async () => {
-			try {
-				const allSubmissions = await getSubmissions();
-				// イベントIDに基づいてフィルタリング
-				// stageからイベントIDを判定する（例：as-ex-8 → as）
-				const eventSubmissions = allSubmissions.filter((submission) => {
-					const stagePrefix = submission.stage.split("-")[0];
-					return stagePrefix === eventId;
-				});
-				setSubmissions(eventSubmissions);
-			} catch (error) {
-				console.error("Error getting submissions:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchSubmissions();
-	}, [eventId]);
+	// エラーハンドリング
+	if (error) {
+		return (
+			<div className="max-w-7xl mx-auto">
+				<div className="text-center py-8">
+					<div className="text-red-500 mb-4">エラーが発生しました</div>
+					<div className="text-gray-600">{error}</div>
+				</div>
+			</div>
+		);
+	}
 
 	const columns: ColumnsType<Submission> = [
 		{
