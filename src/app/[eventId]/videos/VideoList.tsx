@@ -2,7 +2,7 @@
 
 import { getSubmissionsAction } from "@/lib/actions/submissions";
 import type { Submission } from "@/types/submission";
-import { YoutubeOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, YoutubeOutlined } from "@ant-design/icons";
 import "@ant-design/v5-patch-for-react-19";
 
 import { useEffect, useState, useOptimistic, useTransition } from "react";
@@ -23,6 +23,7 @@ interface VideoListProps {
 export function VideoList({ eventId, eventTitle }: VideoListProps) {
 	const [submissions, setSubmissions] = useState<Submission[]>([]);
 	const [isPending, startTransition] = useTransition();
+	const [error, setError] = useState<string | null>(null);
 
 	// React 19のuseOptimisticで楽観的UI更新を実装
 	const [optimisticSubmissions, addOptimisticSubmission] = useOptimistic(
@@ -45,14 +46,28 @@ export function VideoList({ eventId, eventTitle }: VideoListProps) {
 						return stagePrefix === eventId;
 					});
 					setSubmissions(eventSubmissions);
+					setError(null);
 				} catch (error) {
 					console.error("Error getting submissions:", error);
+					setError("投稿の取得中にエラーが発生しました。");
 				}
 			});
 		};
 
 		fetchSubmissions();
 	}, [eventId]);
+
+	// エラーハンドリング
+	if (error) {
+		return (
+			<div className="max-w-7xl mx-auto">
+				<div className="text-center py-8">
+					<div className="text-red-500 mb-4">エラーが発生しました</div>
+					<div className="text-gray-600">{error}</div>
+				</div>
+			</div>
+		);
+	}
 
 	// 楽観的投稿を追加するメソッド（例：新しい投稿が追加されたとき）
 	const handleOptimisticAdd = (newSubmission: Submission) => {
