@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-import { ClientCalculatePage } from "./ClientCalculatePage";
 import eventsConfig from "../../../../config/events.json";
+import { ClientCalculatePage } from "./ClientCalculatePage";
 
 interface CalculatePageProps {
 	params: Promise<{

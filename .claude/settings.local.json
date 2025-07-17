@@ -20,13 +20,18 @@
       "Bash(npm run fix:*)",
       "Bash(npm run test:*)",
       "Bash(echo:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
-      "Bash(rm -r:*)"
+      "Bash(rm -r:*)",
+      "Read(.env*)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "playwright"
+  ],
   "hooks": {
     "PostToolUse": [
       {
@@ -35,6 +40,22 @@
           {
             "type": "command",
             "command": "npm run fix"
+          },
+          {
+            "type": "command",
+            "command": "echo '✅ 処理完了時刻: '$(date '+%Y年%m月%d日（%a）%H:%M')"
+          },
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          },
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claudeが完了しました\" with title \"Claude Code\"'"
+          },
+          {
+            "type": "command",
+            "command": "npx ccusage@latest"
           }
         ]
       }
@@ -61,5 +82,6 @@
         ]
       }
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

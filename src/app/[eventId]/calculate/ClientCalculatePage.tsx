@@ -10,7 +10,10 @@ interface ClientCalculatePageProps {
 	fiveStarOperatorImages: string[];
 }
 
-export function ClientCalculatePage({ title, fiveStarOperatorImages }: ClientCalculatePageProps) {
+export function ClientCalculatePage({
+	title,
+	fiveStarOperatorImages,
+}: ClientCalculatePageProps) {
 	return (
 		<FormLayout title={title}>
 			<ContractCalculator fiveStarOperatorImages={fiveStarOperatorImages} />

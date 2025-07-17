@@ -3,8 +3,8 @@ import { Button, Typography } from "antd";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ClientEventPage } from "./ClientEventPage";
 import eventsConfig from "../../../config/events.json";
+import { ClientEventPage } from "./ClientEventPage";
 
 interface EventPageProps {
 	params: Promise<{
