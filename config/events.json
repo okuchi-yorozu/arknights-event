@@ -27,11 +27,11 @@
 		"id": "or-s",
 		"title": "イベント『相見歓』S攻略動画募集",
 		"deadline": "8/7（木）23時〆切",
-		"thumbnailUrl": "/events/or/or-s-8.jpg",
+		"thumbnailUrl": "/events/or/or-s-4.jpg",
 		"stages": [
-			{ "value": "or-s-8", "label": "OR-S-8" }
+			{ "value": "or-s-4", "label": "OR-S-4" }
 		],
-		"defaultStage": "or-s-8",
+		"defaultStage": "or-s-4",
 		"active": true,
 		"calculator": null
 	},
