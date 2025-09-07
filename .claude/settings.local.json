@@ -34,7 +34,13 @@
       "mcp__serena__think_about_collected_information",
       "mcp__serena__search_for_pattern",
       "mcp__serena__think_about_whether_you_are_done",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:sli.dev)",
+      "Bash(npm install)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": [
       "Bash(rm -rf:*)",

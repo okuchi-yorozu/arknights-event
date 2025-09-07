@@ -91,5 +91,17 @@
 				"/img/operators/five_stars/ヴァラルクビン.png"
 			]
 		}
+	},
+	"ea-ex": {
+		"id": "ea-ex",
+		"title": "イベント『挽歌が灰に還る時』EX攻略動画募集",
+		"deadline": "9/12（金）23時〆切",
+		"thumbnailUrl": "/events/ea/ea-ex-8.jpg",
+		"stages": [
+			{ "value": "ea-ex-8", "label": "EA-EX-8" }
+		],
+		"defaultStage": "ea-ex-8",
+		"active": true,
+		"calculator": null
 	}
 }

@@ -49,8 +49,8 @@ export function useSubmissions(eventId?: string): UseSubmissionsReturn {
 
 			const filtered = eventId
 				? data.filter((submission) => {
-						const stagePrefix = submission.stage.split("-")[0];
-						return stagePrefix === eventId;
+						// ステージが eventId で始まるかチェック
+						return submission.stage.startsWith(eventId);
 					})
 				: data;
 
@@ -113,8 +113,8 @@ export function useSubmissionCount(eventId?: string) {
 
 				const filtered = eventId
 					? data.filter((submission) => {
-							const stagePrefix = submission.stage.split("-")[0];
-							return stagePrefix === eventId;
+							// ステージが eventId で始まるかチェック
+							return submission.stage.startsWith(eventId);
 						})
 					: data;
 
