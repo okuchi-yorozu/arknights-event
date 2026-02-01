@@ -8,7 +8,7 @@
 			{ "value": "ep-ex-8", "label": "EP-EX-8" }
 		],
 		"defaultStage": "ep-ex-8",
-		"active": true,
+		"active": false,
 		"calculator": null
 	},
 	"or-ex": {
@@ -20,7 +20,7 @@
 			{ "value": "or-ex-8", "label": "OR-EX-8" }
 		],
 		"defaultStage": "or-ex-8",
-		"active": true,
+		"active": false,
 		"calculator": null
 	},
 	"or-s": {
@@ -32,7 +32,7 @@
 			{ "value": "or-s-4", "label": "OR-S-4" }
 		],
 		"defaultStage": "or-s-4",
-		"active": true,
+		"active": false,
 		"calculator": null
 	},
 	"go": {
@@ -44,7 +44,7 @@
 			{ "value": "go-ex-8", "label": "GO-EX-8" }
 		],
 		"defaultStage": "go-ex-8",
-		"active": true,
+		"active": false,
 		"calculator": {
 			"title": "イベント『落日の向こうへ』契約計算機",
 			"fiveStarOperatorImages": [
@@ -73,7 +73,7 @@
 			{ "value": "pv-s-5", "label": "PV-S-5" }
 		],
 		"defaultStage": "pv-ex-8",
-		"active": true,
+		"active": false,
 		"calculator": {
 			"title": "イベント『幕開く者たち』契約計算機",
 			"fiveStarOperatorImages": [
@@ -101,6 +101,30 @@
 			{ "value": "ea-ex-8", "label": "EA-EX-8" }
 		],
 		"defaultStage": "ea-ex-8",
+		"active": false,
+		"calculator": null
+	},
+	"at-ex": {
+		"id": "at-ex",
+		"title": "イベント『墟』EX攻略動画募集",
+		"deadline": "2/6（金）23時〆切",
+		"thumbnailUrl": "/events/at/at-ex-8.jpg",
+		"stages": [
+			{ "value": "at-ex-8", "label": "AT-EX-8" }
+		],
+		"defaultStage": "at-ex-8",
+		"active": true,
+		"calculator": null
+	},
+	"at-s": {
+		"id": "at-s",
+		"title": "イベント『墟』S攻略動画募集",
+		"deadline": "2/6（金）23時〆切",
+		"thumbnailUrl": "/events/at/at-s-4.jpg",
+		"stages": [
+			{ "value": "at-s-4", "label": "AT-S-4" }
+		],
+		"defaultStage": "at-s-4",
 		"active": true,
 		"calculator": null
 	}
