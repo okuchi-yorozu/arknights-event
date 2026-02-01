@@ -179,6 +179,12 @@ export default function MySubmissionsPage() {
 		if (stage?.startsWith("go-")) {
 			return { name: "落日の向こうへ", color: "volcano" };
 		}
+		if (stage?.startsWith("at-ex")) {
+			return { name: "墟 EX", color: "volcano" };
+		}
+		if (stage?.startsWith("at-s")) {
+			return { name: "墟 S", color: "volcano" };
+		}
 		if (stage?.startsWith("as-")) {
 			return { name: "アークナイツ攻略動画企画", color: "lime" };
 		}
