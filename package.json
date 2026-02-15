@@ -23,7 +23,7 @@
     "framer-motion": "^12.6.5",
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
-    "next": "15.3.8",
+    "next": "^15.5.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "uuid": "^11.1.0"
