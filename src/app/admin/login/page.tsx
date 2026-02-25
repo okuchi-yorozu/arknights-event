@@ -49,8 +49,10 @@ export default function LoginPage() {
 				const data = await response.json();
 				setError(data.error ?? "ログインに失敗しました");
 			}
-		} catch {
-			setError("ログインに失敗しました");
+		} catch (err) {
+			const code = (err as { code?: string }).code ?? "unknown";
+			console.error("Google login error:", err);
+			setError(`ログインに失敗しました: ${code}`);
 		} finally {
 			setLoading(false);
 		}
