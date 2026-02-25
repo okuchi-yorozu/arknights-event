@@ -1,3 +1,4 @@
+import { AdminNav } from "./AdminNav";
 import { ConfigProvider } from "antd";
 import jaJP from "antd/locale/ja_JP";
 
@@ -23,6 +24,7 @@ export default function AdminLayout({
 				},
 			}}
 		>
+			<AdminNav />
 			{children}
 		</ConfigProvider>
 	);

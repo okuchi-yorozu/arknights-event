@@ -1,7 +1,6 @@
+import { getEventById } from "@/lib/getEventsData";
 import { isEventActive } from "@/lib/utils/date";
-import type { EventsConfig } from "@/types/events";
 import { notFound } from "next/navigation";
-import eventsConfig from "../../../../config/events.json";
 import { AccessDeniedPage } from "./AccessDeniedPage";
 import { VideoList } from "./VideoList";
 
@@ -11,8 +10,7 @@ interface Props {
 
 export default async function VideosPage({ params }: Props) {
 	const { eventId } = await params;
-	const events = eventsConfig as EventsConfig;
-	const event = events[eventId];
+	const event = await getEventById(eventId);
 
 	if (!event) {
 		notFound();
