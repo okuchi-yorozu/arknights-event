@@ -40,7 +40,16 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs"
+      "mcp__context7__get-library-docs",
+      "Bash(npx skills add obra/superpowers@requesting-code-review -g -y 2>&1)",
+      "Bash(npx skills add obra/superpowers@receiving-code-review -g -y 2>&1)",
+      "Bash(npx skills add wshobson/agents@code-review-excellence -g -y 2>&1)",
+      "mcp__serena__read_memory",
+      "Bash(npm audit --json 2>/dev/null | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k, '->', v.get\\('fixAvailable'\\)\\) for k,v in d.get\\('vulnerabilities',{}\\).items\\(\\)]\")",
+      "Bash(npm ls minimatch 2>&1 | head -30)",
+      "Bash(npm audit fix --dry-run 2>&1)",
+      "Bash(npm show minimatch version 2>&1)",
+      "Bash(npm audit fix 2>&1)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
