@@ -1,9 +1,5 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Button, Typography } from "antd";
-import Link from "next/link";
+import { getEventById } from "@/lib/getEventsData";
 import { notFound } from "next/navigation";
-
-import eventsConfig from "../../../config/events.json";
 import { ClientEventPage } from "./ClientEventPage";
 
 interface EventPageProps {
@@ -14,7 +10,7 @@ interface EventPageProps {
 
 export default async function EventPage({ params }: EventPageProps) {
 	const { eventId } = await params;
-	const eventConfig = eventsConfig[eventId as keyof typeof eventsConfig];
+	const eventConfig = await getEventById(eventId);
 
 	if (!eventConfig || !eventConfig.active) {
 		notFound();
