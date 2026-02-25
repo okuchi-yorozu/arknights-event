@@ -2,12 +2,6 @@ import { createToken } from "@/lib/auth/jwt";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
-if (!PROJECT_ID) throw new Error("NEXT_PUBLIC_FIREBASE_PROJECT_ID is not set");
-if (!ADMIN_EMAIL) throw new Error("ADMIN_EMAIL environment variable is not set");
-
 // Google の公開鍵（jose が自動キャッシュ）
 const JWKS = createRemoteJWKSet(
 	new URL(
@@ -16,6 +10,13 @@ const JWKS = createRemoteJWKSet(
 );
 
 export async function POST(request: Request) {
+	const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+	const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+	if (!PROJECT_ID || !ADMIN_EMAIL) {
+		return NextResponse.json({ error: "サーバー設定エラー" }, { status: 500 });
+	}
+
 	try {
 		const { idToken } = await request.json();
 
