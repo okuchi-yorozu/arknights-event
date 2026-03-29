@@ -1,4 +1,4 @@
-import { isEventActive, parseDeadline } from "@/lib/utils/date";
+import { isEventActive } from "@/lib/utils/date";
 import type {
 	CategorizedEvents,
 	EventConfig,
@@ -37,7 +37,7 @@ export function useEvents(): CategorizedEvents {
 		const allEvents = Object.values(events)
 			.filter((event) => event.active)
 			.map(processEvent)
-			.sort((a, b) => b.deadlineValue - a.deadlineValue);
+			.sort((a, b) => (b.deadline ?? "").localeCompare(a.deadline ?? ""));
 
 		return {
 			active: allEvents.filter((event) => event.isActive),
@@ -60,7 +60,7 @@ export function useFilteredEvents(
 			.filter((event) => event.active)
 			.map(processEvent)
 			.filter(filter)
-			.sort((a, b) => b.deadlineValue - a.deadlineValue);
+			.sort((a, b) => (b.deadline ?? "").localeCompare(a.deadline ?? ""));
 	}, [filter]);
 }
 
@@ -70,7 +70,6 @@ export function useFilteredEvents(
  * @returns 処理済みイベントデータ
  */
 function processEvent(event: EventConfig): ProcessedEvent {
-	const deadlineValue = parseDeadline(event.deadline);
 	const isActive = isEventActive(event.deadline);
 
 	return {
@@ -78,6 +77,5 @@ function processEvent(event: EventConfig): ProcessedEvent {
 		path: `/${event.id}`,
 		hasDeadline: Boolean(event.deadline),
 		isActive,
-		deadlineValue,
 	};
 }

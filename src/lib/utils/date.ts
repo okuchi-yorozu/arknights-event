@@ -1,48 +1,33 @@
 /**
  * 日付関連のユーティリティ関数
- * 日本の日付形式（M/D）をパースし、イベントの活動状態を判定する
+ * ISO 8601 日付形式（YYYY-MM-DD）を使用して日付を管理する
  */
-
-/**
- * 日付文字列をパースして比較用の数値を返す
- * @param deadline - "3/25（火）23時〆切" 形式の文字列
- * @returns 比較用の数値（月*100 + 日）、無効な場合は0
- */
-export function parseDeadline(deadline: string | null): number {
-	if (!deadline) return 0;
-
-	// "3/25（火）23時〆切" から "3/25" を抽出
-	const match = deadline.match(/(\d+)\/(\d+)/);
-	if (!match) return 0;
-
-	const month = Number.parseInt(match[1], 10);
-	const day = Number.parseInt(match[2], 10);
-
-	// 月と日を使って比較用の値を作成（月 * 100 + 日）
-	return month * 100 + day;
-}
-
-/**
- * 現在日付を取得して比較用の数値を返す
- * @returns 比較用の数値（月*100 + 日）
- */
-export function getCurrentDate(): number {
-	const now = new Date();
-	const month = now.getMonth() + 1; // 0から始まるため+1
-	const day = now.getDate();
-	return month * 100 + day;
-}
 
 /**
  * 締切日が現在日付より後かどうかを判定する
- * @param deadline - 締切日の文字列
+ * @param deadline - "YYYY-MM-DD" 形式の締切日文字列
  * @returns イベントが現在進行中かどうか
  */
 export function isEventActive(deadline: string | null): boolean {
 	if (!deadline) return false;
-	const currentDate = getCurrentDate();
-	const deadlineDate = parseDeadline(deadline);
-	return deadlineDate >= currentDate;
+	const [year, month, day] = deadline.split("-").map(Number);
+	const now = new Date();
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	return new Date(year, month - 1, day) >= today;
+}
+
+/**
+ * ISO 日付文字列を日本語の締切表示形式に変換する
+ * @param deadline - "YYYY-MM-DD" 形式の締切日文字列
+ * @returns "M/D（曜）23時〆切" 形式の文字列、無効な場合は null
+ */
+export function formatDeadline(deadline: string | null): string | null {
+	if (!deadline) return null;
+	const [year, month, day] = deadline.split("-").map(Number);
+	if (!year || !month || !day) return null;
+	const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+	const weekday = weekdays[new Date(year, month - 1, day).getDay()];
+	return `${month}/${day}（${weekday}）23時〆切`;
 }
 
 /**
@@ -62,8 +47,7 @@ export function formatJapaneseDate(date: Date): string {
  * 日付ユーティリティのオブジェクト（名前空間として使用）
  */
 export const dateUtils = {
-	parseDeadline,
-	getCurrentDate,
 	isEventActive,
+	formatDeadline,
 	formatJapaneseDate,
 } as const;

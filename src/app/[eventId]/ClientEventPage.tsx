@@ -9,16 +9,8 @@ import { Thumbnails } from "@/components/molecules/Thumbnails";
 import { VideoSubmissionForm } from "@/components/organisms";
 import { EventSubmissionGuidelines } from "@/components/organisms/EventSubmissionGuidelines";
 import { FormLayout } from "@/components/templates";
-
-interface EventConfig {
-	id: string;
-	title: string;
-	deadline: string | null;
-	thumbnailUrl: string;
-	stages: Array<{ value: string; label: string }>;
-	defaultStage: string;
-	active: boolean;
-}
+import { formatDeadline } from "@/lib/utils/date";
+import type { EventConfig } from "@/types/events";
 
 interface ClientEventPageProps {
 	eventConfig: EventConfig;
@@ -43,7 +35,7 @@ export function ClientEventPage({ eventConfig }: ClientEventPageProps) {
 			<FormLayout title={eventConfig.title}>
 				{eventConfig.deadline && (
 					<Typography.Title level={3} className="text-red-600 my-6">
-						{eventConfig.deadline}
+						{formatDeadline(eventConfig.deadline)}
 					</Typography.Title>
 				)}
 				<Thumbnails url={eventConfig.thumbnailUrl} />
