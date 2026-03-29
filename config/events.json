@@ -2,7 +2,7 @@
 	"ep": {
 		"id": "ep",
 		"title": "イベント『白き海の彼方へ』攻略動画募集",
-		"deadline": "6/19（木）23時〆切",
+		"deadline": "2025-06-19",
 		"thumbnailUrl": "/events/ep/ep-ex-8.jpg",
 		"stages": [
 			{ "value": "ep-ex-8", "label": "EP-EX-8" }
@@ -14,7 +14,7 @@
 	"or-ex": {
 		"id": "or-ex",
 		"title": "イベント『相見歓』EX攻略動画募集",
-		"deadline": "7/31（木）23時〆切",
+		"deadline": "2025-07-31",
 		"thumbnailUrl": "/events/or/or-ex-8.jpg",
 		"stages": [
 			{ "value": "or-ex-8", "label": "OR-EX-8" }
@@ -26,7 +26,7 @@
 	"or-s": {
 		"id": "or-s",
 		"title": "イベント『相見歓』S攻略動画募集",
-		"deadline": "8/7（木）23時〆切",
+		"deadline": "2025-08-07",
 		"thumbnailUrl": "/events/or/or-s-4.jpg",
 		"stages": [
 			{ "value": "or-s-4", "label": "OR-S-4" }
@@ -38,7 +38,7 @@
 	"go": {
 		"id": "go",
 		"title": "イベント『落日の向こうへ』攻略動画募集",
-		"deadline": "4/30（水）23時〆切",
+		"deadline": "2025-04-30",
 		"thumbnailUrl": "/events/go/go-ex-8.jpg",
 		"stages": [
 			{ "value": "go-ex-8", "label": "GO-EX-8" }
@@ -66,7 +66,7 @@
 	"pv": {
 		"id": "pv",
 		"title": "イベント『幕開く者たち』攻略動画募集",
-		"deadline": "5/15（木）23時〆切",
+		"deadline": "2025-05-15",
 		"thumbnailUrl": "/events/pv/pv-ex-8.jpg",
 		"stages": [
 			{ "value": "pv-ex-8", "label": "PV-EX-8" },
@@ -95,7 +95,7 @@
 	"ea-ex": {
 		"id": "ea-ex",
 		"title": "イベント『挽歌が灰に還る時』EX攻略動画募集",
-		"deadline": "9/12（金）23時〆切",
+		"deadline": "2025-09-12",
 		"thumbnailUrl": "/events/ea/ea-ex-8.jpg",
 		"stages": [
 			{ "value": "ea-ex-8", "label": "EA-EX-8" }
@@ -107,7 +107,7 @@
 	"at-ex": {
 		"id": "at-ex",
 		"title": "イベント『墟』EX攻略動画募集",
-		"deadline": "2/6（金）23時〆切",
+		"deadline": "2026-02-06",
 		"thumbnailUrl": "/events/at/at-ex-8.jpg",
 		"stages": [
 			{ "value": "at-ex-8", "label": "AT-EX-8" }
@@ -119,7 +119,7 @@
 	"at-s": {
 		"id": "at-s",
 		"title": "イベント『墟』S攻略動画募集",
-		"deadline": "2/6（金）23時〆切",
+		"deadline": "2026-02-06",
 		"thumbnailUrl": "/events/at/at-s-4.jpg",
 		"stages": [
 			{ "value": "at-s-4", "label": "AT-S-4" }

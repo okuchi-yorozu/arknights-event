@@ -39,7 +39,6 @@ export interface ProcessedEvent extends EventConfig {
 	path: string;
 	hasDeadline: boolean;
 	isActive: boolean;
-	deadlineValue: number;
 }
 
 /**

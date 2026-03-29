@@ -3,6 +3,7 @@
 import "@ant-design/v5-patch-for-react-19";
 
 import { useEvents } from "@/hooks/useEventData";
+import { formatDeadline } from "@/lib/utils/date";
 import type { ProcessedEvent } from "@/types/events";
 import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Row, Tag, Typography } from "antd";
@@ -53,7 +54,7 @@ function EventCard({
 								className={isPast ? "text-gray-400" : "text-red-500"}
 							/>
 							<Tag color={isPast ? "default" : "red"} className="text-sm">
-								{event.deadline}
+								{formatDeadline(event.deadline)}
 							</Tag>
 						</div>
 					)}
