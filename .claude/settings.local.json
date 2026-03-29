@@ -49,7 +49,11 @@
       "Bash(npm ls minimatch 2>&1 | head -30)",
       "Bash(npm audit fix --dry-run 2>&1)",
       "Bash(npm show minimatch version 2>&1)",
-      "Bash(npm audit fix 2>&1)"
+      "Bash(npm audit fix 2>&1)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(gh pr:*)",
+      "Bash(npx vercel:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

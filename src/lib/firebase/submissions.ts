@@ -1,7 +1,8 @@
 import type { Submission } from "@/types/submission";
 
 export const createSubmission = async (
-	data: Omit<Submission, "id" | "createdAt">,
+	data: Omit<Submission, "id" | "uid" | "createdAt">,
+	idToken: string,
 ) => {
 	try {
 		const response = await fetch("/api/submissions", {
@@ -9,7 +10,7 @@ export const createSubmission = async (
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify({ ...data, idToken }),
 		});
 
 		if (!response.ok) {

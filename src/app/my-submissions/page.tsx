@@ -4,13 +4,14 @@ import "@ant-design/v5-patch-for-react-19";
 
 import { useEffect, useState } from "react";
 
-import { EditOutlined, HomeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, HomeOutlined } from "@ant-design/icons";
 import {
 	Button,
 	Card,
 	Empty,
 	Form,
 	Modal,
+	Popconfirm,
 	Space,
 	Tag,
 	Typography,
@@ -26,63 +27,43 @@ import {
 	TwitterField,
 	YoutubeUrlField,
 } from "@/components/molecules";
+import { useAuth } from "@/lib/firebase/auth-context";
 import type { Submission } from "@/types/submission";
 import Link from "next/link";
 
 const { Title, Text } = Typography;
 
-interface MySubmission {
-	id: string;
-	editKey: string;
-	createdAt: string;
-	concept: string;
-	stage?: string;
-	introduction?: string;
-}
-
 export default function MySubmissionsPage() {
 	const [messageApi, contextHolder] = message.useMessage();
-	const [mySubmissions, setMySubmissions] = useState<MySubmission[]>([]);
+	const [mySubmissions, setMySubmissions] = useState<Submission[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [editingSubmission, setEditingSubmission] = useState<Submission | null>(
 		null,
 	);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [saving, setSaving] = useState(false);
+	const { user, getIdToken } = useAuth();
 
 	useEffect(() => {
+		if (!user) return;
+
 		const loadMySubmissions = async () => {
 			try {
-				const saved = localStorage.getItem("mySubmissions");
-				if (saved) {
-					const submissions = JSON.parse(saved);
+				const idToken = await getIdToken();
+				const response = await fetch("/api/my-submissions", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ idToken }),
+				});
 
-					// 各投稿のstage情報を取得
-					const submissionsWithStage = await Promise.all(
-						submissions.map(async (submission: MySubmission) => {
-							try {
-								const response = await fetch("/api/my-submissions", {
-									method: "POST",
-									headers: { "Content-Type": "application/json" },
-									body: JSON.stringify({ editKey: submission.editKey }),
-								});
-
-								if (response.ok) {
-									const fullData = await response.json();
-									return {
-										...submission,
-										stage: fullData.stage,
-										introduction: fullData.introduction,
-									};
-								}
-								return submission;
-							} catch {
-								return submission;
-							}
-						}),
+				if (response.ok) {
+					const submissions = await response.json();
+					setMySubmissions(
+						submissions.map((s: Submission) => ({
+							...s,
+							createdAt: new Date(s.createdAt),
+						})),
 					);
-
-					setMySubmissions(submissionsWithStage);
 				}
 			} catch (error) {
 				console.error("Error loading my submissions:", error);
@@ -93,60 +74,59 @@ export default function MySubmissionsPage() {
 		};
 
 		loadMySubmissions();
-	}, [messageApi]);
+	}, [user, getIdToken, messageApi]);
 
-	const isExpired = (createdAt: string) => {
-		const now = new Date();
-		const created = new Date(createdAt);
+	const isExpired = (createdAt: Date) => {
 		const daysDiff =
-			(now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
-		return daysDiff > 14;
+			(Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
+		return daysDiff > 30;
 	};
 
-	const handleEdit = async (submission: MySubmission) => {
+	const handleDelete = async (id: string) => {
+		try {
+			const idToken = await getIdToken();
+			const response = await fetch(`/api/submissions/${id}`, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ idToken }),
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error || "Failed to delete submission");
+			}
+
+			messageApi.success("投稿を削除しました");
+			setMySubmissions((prev) => prev.filter((s) => s.id !== id));
+		} catch (error) {
+			console.error("Error deleting submission:", error);
+			messageApi.error("削除に失敗しました。もう一度お試しください。");
+		}
+	};
+
+	const handleEdit = (submission: Submission) => {
 		if (isExpired(submission.createdAt)) {
 			messageApi.error("編集期限（30日）を過ぎているため、編集できません");
 			return;
 		}
-
-		try {
-			const response = await fetch("/api/my-submissions", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ editKey: submission.editKey }),
-			});
-
-			if (!response.ok) {
-				throw new Error("Failed to load submission");
-			}
-
-			const submissionData = await response.json();
-			setEditingSubmission(submissionData);
-			setEditModalOpen(true);
-		} catch (error) {
-			console.error("Error loading submission:", error);
-			messageApi.error("投稿データの読み込みに失敗しました");
-		}
+		setEditingSubmission(submission);
+		setEditModalOpen(true);
 	};
 
 	const handleSave = async (
-		values: Omit<Submission, "id" | "editKey" | "createdAt">,
+		values: Omit<Submission, "id" | "uid" | "createdAt">,
 	) => {
 		if (!editingSubmission) return;
 
 		setSaving(true);
 		try {
+			const idToken = await getIdToken();
 			const response = await fetch(`/api/submissions/${editingSubmission.id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					...values,
-					editKey: editingSubmission.editKey,
-				}),
+				body: JSON.stringify({ ...values, idToken }),
 			});
 
 			if (!response.ok) {
@@ -157,6 +137,23 @@ export default function MySubmissionsPage() {
 			messageApi.success("投稿情報を更新しました！");
 			setEditModalOpen(false);
 			setEditingSubmission(null);
+
+			// 一覧を再取得
+			const idTokenRefresh = await getIdToken();
+			const refreshed = await fetch("/api/my-submissions", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ idToken: idTokenRefresh }),
+			});
+			if (refreshed.ok) {
+				const submissions = await refreshed.json();
+				setMySubmissions(
+					submissions.map((s: Submission) => ({
+						...s,
+						createdAt: new Date(s.createdAt),
+					})),
+				);
+			}
 		} catch (error) {
 			console.error("Error updating submission:", error);
 			messageApi.error(
@@ -256,15 +253,33 @@ export default function MySubmissionsPage() {
 										</div>
 									}
 									extra={
-										<Button
-											type="primary"
-											icon={<EditOutlined />}
-											onClick={() => handleEdit(submission)}
-											disabled={isExpired(submission.createdAt)}
-											style={{ height: "40px" }}
-										>
-											編集
-										</Button>
+										<Space>
+											<Button
+												type="primary"
+												icon={<EditOutlined />}
+												onClick={() => handleEdit(submission)}
+												disabled={isExpired(submission.createdAt)}
+												style={{ height: "40px" }}
+											>
+												編集
+											</Button>
+											<Popconfirm
+												title="投稿を削除しますか？"
+												description="この操作は取り消せません。"
+												okText="削除"
+												cancelText="キャンセル"
+												okButtonProps={{ danger: true }}
+												onConfirm={() => handleDelete(submission.id ?? "")}
+											>
+												<Button
+													danger
+													icon={<DeleteOutlined />}
+													style={{ height: "40px" }}
+												>
+													削除
+												</Button>
+											</Popconfirm>
+										</Space>
 									}
 								>
 									{submission.introduction && (
