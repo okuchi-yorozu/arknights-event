@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/lib/firebase/auth-context";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 import { Noto_Sans_JP } from "next/font/google";
@@ -48,7 +49,9 @@ const RootLayout = ({ children }: React.PropsWithChildren) => (
 						},
 					}}
 				>
-					<App>{children}</App>
+					<App>
+						<AuthProvider>{children}</AuthProvider>
+					</App>
 				</ConfigProvider>
 			</AntdRegistry>
 		</body>

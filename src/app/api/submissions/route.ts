@@ -1,43 +1,36 @@
-import { initializeApp } from "firebase/app";
-import {
-	Timestamp,
-	addDoc,
-	collection,
-	getDocs,
-	getFirestore,
-	orderBy,
-	query,
-} from "firebase/firestore";
+import { adminAuth, adminDb } from "@/lib/firebase/admin";
 
+import { FieldValue } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
-
-const firebaseConfig = {
-	apiKey: process.env.FIREBASE_API_KEY,
-	authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-	projectId: process.env.FIREBASE_PROJECT_ID,
-	storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-	messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-	appId: process.env.FIREBASE_APP_ID,
-};
-
-// Firebaseの初期化
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
+		const { idToken, ...formData } = body;
+
+		if (!idToken) {
+			return NextResponse.json(
+				{ error: "認証トークンが必要です" },
+				{ status: 401 },
+			);
+		}
+
+		const decoded = await adminAuth.verifyIdToken(idToken);
+		const uid = decoded.uid;
+
 		const submissionData = {
-			...body,
-			createdAt: Timestamp.now(),
+			...formData,
+			uid,
+			createdAt: FieldValue.serverTimestamp(),
 		};
 
-		const docRef = await addDoc(collection(db, "submissions"), submissionData);
+		const docRef = await adminDb.collection("submissions").add(submissionData);
 
 		return NextResponse.json({
 			id: docRef.id,
-			...submissionData,
-			createdAt: submissionData.createdAt.toDate(),
+			...formData,
+			uid,
+			createdAt: new Date(),
 		});
 	} catch (error) {
 		console.error("Error creating submission:", error);
@@ -50,16 +43,15 @@ export async function POST(request: Request) {
 
 export async function GET() {
 	try {
-		const q = query(
-			collection(db, "submissions"),
-			orderBy("createdAt", "desc"),
-		);
+		const snapshot = await adminDb
+			.collection("submissions")
+			.orderBy("createdAt", "desc")
+			.get();
 
-		const snapshot = await getDocs(q);
 		const submissions = snapshot.docs.map((doc) => ({
 			id: doc.id,
 			...doc.data(),
-			createdAt: doc.data().createdAt.toDate(),
+			createdAt: doc.data().createdAt?.toDate() ?? new Date(),
 		}));
 
 		return NextResponse.json(submissions);

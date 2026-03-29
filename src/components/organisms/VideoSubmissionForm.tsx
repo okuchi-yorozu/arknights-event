@@ -1,10 +1,10 @@
 "use client";
 
+import { useAuth } from "@/lib/firebase/auth-context";
 import { createSubmission } from "@/lib/firebase/submissions";
 import type { Submission } from "@/types/submission";
 
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import { Button, Descriptions, Form, Modal, Tag, message } from "antd";
 import Link from "next/link";
@@ -20,7 +20,7 @@ import {
 	YoutubeUrlField,
 } from "../molecules";
 
-type FormData = Omit<Submission, "id" | "createdAt">;
+type FormData = Omit<Submission, "id" | "uid" | "createdAt">;
 
 interface VideoSubmissionFormProps {
 	stages: Array<{ value: string; label: string }>;
@@ -36,6 +36,7 @@ export const VideoSubmissionForm = ({
 	const [messageApi, contextHolder] = message.useMessage();
 	const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 	const [formValues, setFormValues] = useState<FormData | null>(null);
+	const { getIdToken } = useAuth();
 
 	const handleSubmit = async (values: FormData) => {
 		setFormValues(values);
@@ -47,39 +48,19 @@ export const VideoSubmissionForm = ({
 
 		setIsSubmitting(true);
 		try {
-			// 編集用のキーを生成
-			const editKey = uuidv4();
-
-			// 投稿データに編集キーを追加
-			const submissionData = {
-				...formValues,
-				editKey,
-			};
-
-			const result = await createSubmission(submissionData);
-
-			// localStorageに編集キーと投稿IDを保存
-			const savedSubmissions = JSON.parse(
-				localStorage.getItem("mySubmissions") || "[]",
-			);
-			savedSubmissions.push({
-				id: result.id,
-				editKey,
-				createdAt: new Date().toISOString(),
-				concept: formValues.concept,
-			});
-			localStorage.setItem("mySubmissions", JSON.stringify(savedSubmissions));
+			const idToken = await getIdToken();
+			await createSubmission(formValues, idToken);
 
 			messageApi.success(
 				<div>
 					<div className="mb-2">応募が完了しました!</div>
 					<Link href="/my-submissions">
 						<Button type="link" size="small" className="p-0">
-							過去の投稿を編集する →
+							過去の投稿を確認する →
 						</Button>
 					</Link>
 				</div>,
-				5, // 5秒間表示
+				5,
 			);
 			form.resetFields();
 			setConfirmModalOpen(false);

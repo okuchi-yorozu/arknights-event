@@ -1,58 +1,34 @@
-import { initializeApp } from "firebase/app";
-import {
-	collection,
-	getDocs,
-	getFirestore,
-	query,
-	where,
-} from "firebase/firestore";
+import { adminAuth, adminDb } from "@/lib/firebase/admin";
 
 import { NextResponse } from "next/server";
 
-const firebaseConfig = {
-	apiKey: process.env.FIREBASE_API_KEY,
-	authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-	projectId: process.env.FIREBASE_PROJECT_ID,
-	storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-	messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-	appId: process.env.FIREBASE_APP_ID,
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 export async function POST(request: Request) {
 	try {
-		const { editKey } = await request.json();
+		const { idToken } = await request.json();
 
-		if (!editKey) {
+		if (!idToken) {
 			return NextResponse.json(
-				{ error: "Edit key is required" },
-				{ status: 400 },
+				{ error: "認証トークンが必要です" },
+				{ status: 401 },
 			);
 		}
 
-		const q = query(
-			collection(db, "submissions"),
-			where("editKey", "==", editKey),
-		);
+		const decoded = await adminAuth.verifyIdToken(idToken);
+		const uid = decoded.uid;
 
-		const snapshot = await getDocs(q);
+		const snapshot = await adminDb
+			.collection("submissions")
+			.where("uid", "==", uid)
+			.orderBy("createdAt", "desc")
+			.get();
 
-		if (snapshot.empty) {
-			return NextResponse.json(
-				{ error: "Submission not found" },
-				{ status: 404 },
-			);
-		}
+		const submissions = snapshot.docs.map((doc) => ({
+			id: doc.id,
+			...doc.data(),
+			createdAt: doc.data().createdAt?.toDate() ?? new Date(),
+		}));
 
-		const submission = {
-			id: snapshot.docs[0].id,
-			...snapshot.docs[0].data(),
-			createdAt: snapshot.docs[0].data().createdAt.toDate(),
-		};
-
-		return NextResponse.json(submission);
+		return NextResponse.json(submissions);
 	} catch (error) {
 		console.error("Error getting submission:", error);
 		return NextResponse.json(

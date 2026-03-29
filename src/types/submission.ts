@@ -1,6 +1,6 @@
 export interface Submission {
 	id?: string;
-	editKey?: string;
+	uid?: string;
 	youtubeUrl: string;
 	concept: string;
 	hasEditing: "edited" | "raw";

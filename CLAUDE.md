@@ -1,222 +1,117 @@
 # CLAUDE.md
 
-このファイルは、Claude Code (claude.ai/code) がこのリポジトリのコードを扱う際のガイダンスを提供します。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 言語設定
 
-**重要**: Claude Code との対話は基本的に日本語で行い、ドキュメントや説明の出力も日本語で統一してください。コードコメントや Git コミットメッセージも日本語を使用することを推奨します。
-
-## Git・GitHub 運用ルール
-
-### 基本方針
-- **日本語でのコミュニケーション**: PRタイトル・説明文・コミットメッセージは日本語で記述
-- **GitHub Flow**: 機能ごとにブランチを作成し、PRでmainにマージ
-- **マージコンフリクト予防**: こまめなmain同期とファイル変更時の注意
-
-### ブランチ戦略
-
-**ブランチ命名規則:**
-- `feature/機能名-説明` （例: `feature/add-user-auth`）
-- `fix/バグ修正-説明` （例: `fix/login-validation-error`）
-- `docs/ドキュメント-説明` （例: `docs/update-readme`）
-
-**コミット単位:**
-- 適切な作業単位でコミットを作成（1コミット1機能/修正）
-- 日本語で分かりやすいコミットメッセージ
-
-### 標準的な開発フロー
-
-**1. 作業開始時:**
-```bash
-git checkout main
-git pull origin main
-git checkout -b feature/新機能名
-```
-
-**2. 開発中:**
-- 機能実装とドキュメント更新を含む関連変更をすべて完了
-- 追加変更は同じブランチで行わず、PR作成前に完了させる
-
-**3. PR作成手順:**
-```bash
-# 全ての変更をコミット・プッシュ
-git add .
-git commit -m "変更内容"
-git push origin feature/新機能名
-
-# PR作成
-gh pr create --title "タイトル" --body "説明"
-
-# PR作成直後に即座にmainに戻る
-git checkout main
-git pull origin main
-```
-
-**4. 追加変更が必要な場合:**
-```bash
-# 新しいブランチを作成（既存のPRブランチは使わない）
-git checkout -b feature/追加変更名
-```
-
-### 重要な注意点
-- **mainブランチでの直接変更は禁止**
-- **PR作成後の同一ブランチでの追加変更は避ける**
-- **設定ファイル変更時はコンフリクトに注意**（`.claude/settings.local.json` など）
-- **作業開始前のブランチ最新化を必須とする**
-- **GitHubでPRを作るときは、新しいブランチを作成し、ファイルをstagingに上げてコミットしてください。PRを作り終わったらmainブランチに戻ってください**
-
-## プロジェクト概要
-
-これは Next.js 15、React 19、Firebase で構築されたアークナイツイベント攻略動画投稿システムです。ゲームイベントのYouTube動画投稿を収集し、管理者用インターフェースを提供します。
+Claude Code との対話・ドキュメント・コメント・Git コミットメッセージはすべて日本語で統一する。
 
 ## 開発コマンド
 
 ```bash
-# 開発サーバーの起動（Turbopack使用）
-npm run dev
-
-# 本番用ビルド
-npm run build
-
-# 本番サーバーの起動
-npm run start
-
-# コードフォーマット（Biome使用、タブインデント）
-npm run format
-
-# リンティング（Biome使用）
-npm run lint
-
-# フォーマット＋リンティング
-npm run fix
+npm run dev          # 開発サーバー起動（Turbopack）
+npm run build        # 本番ビルド
+npm run fix          # フォーマット＋リント（Biome）
+npm run type-check   # TypeScript 型チェック
+npm run test         # type-check + fix（テストフレームワークなし）
 ```
 
-## カスタムコマンド
+## アーキテクチャ
 
-```bash
-# 今日の開発ログを作成
-/dev-log
+### 全体構成
+
+Next.js 15 App Router + Firebase Admin SDK（APIルート経由）。クライアントから Firebase に直接アクセスしない。
+
+```
+src/
+  app/
+    [eventId]/          # 動的イベントルート
+      page.tsx          # サーバーコンポーネント（config 検証）
+      ClientEventPage.tsx
+      calculate/        # 契約計算機
+      videos/           # 投稿一覧
+    admin/              # JWT 認証が必要な管理画面
+    api/                # Firebase と通信するAPIルート
+  components/
+    atoms/              # 基本フォーム要素（FormInput, FormButton 等）
+    molecules/          # フォームフィールド（YoutubeUrlField, ConceptField 等）
+    organisms/          # 複合コンポーネント（VideoSubmissionForm 等）
+    templates/          # レイアウト（FormLayout）
+  hooks/                # useSubmissions, useSubmissionCount
+  lib/
+    auth/jwt.ts         # jose ライブラリによる JWT 操作
+    firebase/           # クライアント側 Firebase ラッパー（APIを呼ぶだけ）
+  types/                # submission.ts, events.ts, api.ts
+  utils/                # validators.ts, twitter.ts
+config/events.json      # イベント設定（コード変更不要でイベント追加可能）
 ```
 
-## 高次アーキテクチャ
+### イベント設定システム
 
-### 技術スタック
-- **フロントエンド**: Next.js 15.3.1 with React 19, TypeScript
-- **UIライブラリ**: Ant Design v5 with React 19 patch
-- **スタイリング**: TailwindCSS
-- **データベース**: Firebase Firestore (client SDK)
-- **認証**: JWT-based admin auth using `jose` library
-- **コード品質**: Biome for formatting/linting (ESLint/Prettier を置き換え)
+`/config/events.json` がすべてのイベント定義を持つ。`active: false` のイベントは 404 になる。新規イベント追加手順：
+1. `config/events.json` にエントリ追加
+2. `/public/events/[eventId]/` に画像配置
+3. コード変更不要
 
-### プロジェクト構造パターン
+`calculator` フィールドが `null` でない場合のみ `/[eventId]/calculate` が意味を持つ。
 
-このプロジェクトは Atomic Design の原則に従っています：
-- **Atoms** (`/components/atoms/`): 基本的なフォームコンポーネント（FormButton, FormInput, など）
-- **Molecules** (`/components/molecules/`): フィールドコンポーネント（YoutubeUrlField, ConceptField, など）
-- **Organisms** (`/components/organisms/`): 複雑なコンポーネント（VideoSubmissionForm, EventSubmissionGuidelines）
-- **Templates** (`/components/templates/`): レイアウトコンポーネント（FormLayout）
+### APIルート一覧
 
-### 重要なアーキテクチャ決定
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST/GET | `/api/submissions` | 投稿作成・一覧取得 |
+| DELETE | `/api/submissions/[id]` | 投稿削除（管理者のみ） |
+| POST | `/api/my-submissions` | editKey で自分の投稿取得 |
+| POST | `/api/admin/auth` | 管理者ログイン |
+| GET | `/api/admin/auth/check` | 認証確認 |
 
-1. **サーバーサイドFirebase操作**: すべてのFirebase操作はNext.jsのAPIルートを通します。クライアントコンポーネントからFirebaseに直接アクセスしないでください。
+### 認証フロー
 
-2. **パスエイリアス**: インポートには `@/` を使用（`src/` にマップ）：
-   ```typescript
-   import { FormLayout } from "@/components/templates";
-   ```
+- `src/middleware.ts` が `/admin/*` を保護（`/admin/login` と `/api/*` は除外）
+- JWT を HTTP-only クッキー `admin_token` に保存
+- パスワード単一・ユーザー管理なし
 
-3. **動的イベントシステム**: イベントは中央集権的な設定システムで管理されます：
-   - イベントメタデータは `/config/events.json` に保存
-   - `/app/[eventId]/page.tsx` と `/app/[eventId]/calculate/page.tsx` による動的ルーティング
-   - Next.js 15の非同期互換性のためのサーバー/クライアントコンポーネント分離
-   - イベント画像は `/public/events/[eventId]/` に配置
+### データモデル（Submission）
 
-4. **イベント設定スキーマ**: `/config/events.json` の各イベントは以下の構造に従います：
-   ```typescript
-   {
-     id: string;                    // イベント識別子（as, ep, go, pv）
-     title: string;                 // 表示タイトル
-     deadline: string | null;       // 締切テキストまたは null
-     thumbnailUrl: string;          // イベント画像のパス
-     stages: Array<{value: string, label: string}>;  // 利用可能なステージ
-     defaultStage: string;          // デフォルト選択ステージ
-     active: boolean;               // イベントがアクティブかどうか
-     calculator?: {                 // オプション：計算機設定
-       title: string;
-       fiveStarOperatorImages: string[];
-     } | null;
-   }
-   ```
-
-5. **新しいイベントの追加**: 新しいイベントを追加するには：
-   1. `/config/events.json` にイベント設定を追加
-   2. イベント画像を `/public/events/[eventId]/` に配置
-   3. コード変更不要 - システムが自動的にルーティングを処理
-
-6. **認証フロー**:
-   - 管理者ログイン：`/admin/login`
-   - JWT を HTTP-only クッキーに保存
-   - ミドルウェアが `/admin/*` ルートを保護
-   - 単一管理者パスワード（ユーザー管理なし）
-
-### APIルート
-
-- `POST /api/submissions` - 新しい投稿作成
-- `GET /api/submissions` - 投稿一覧取得
-- `DELETE /api/submissions/[id]` - 投稿削除（管理者のみ）
-- `POST /api/admin/auth` - 管理者ログイン
-- `GET /api/admin/auth/check` - 認証状態確認
-
-### データモデル
-
-投稿は以下の構造に従います：
 ```typescript
 {
-  youtubeUrl: string;      // 必須、検証済みYouTube URL
-  concept: string;         // 必須、最大50文字
+  id?: string;
+  editKey?: string;
+  youtubeUrl: string;
+  concept: string;            // 最大50文字
   hasEditing: "edited" | "raw";
-  stage: string;           // イベント固有のステージ
+  stage: string;              // イベントIDのプレフィックスで eventId にフィルタリング
   difficulty: "normal" | "challenge";
-  twitterHandle?: string;  // オプション
-  doctorHistory: string;   // 経験レベル enum
-  introduction?: string;   // オプション、最大50文字
+  twitterHandle?: string;
+  doctorHistory: "less-than-6months" | "6months-1year" | "1-2years" | "2-3years" | "more-than-3years";
+  introduction?: string;      // 最大50文字
   createdAt: Date;
 }
 ```
 
-### コンポーネント規約
-
-1. **クライアントコンポーネント**: `"use client"` ディレクティブを使用
-2. **Ant Design パッチ**: クライアントコンポーネントで `@ant-design/v5-patch-for-react-19` をインポート
-3. **フォームバリデーション**: Ant Design Form と `/utils/validators.ts` のカスタムバリデーターを使用
-4. **タイポグラフィ**: テキストには Ant Design Typography コンポーネントを使用
-5. **エラーハンドリング**: Ant Design message コンポーネントでユーザーフレンドリーなメッセージを表示
-
-### Firebase セキュリティ
-
-- Firestore ルールは投稿の作成のみを許可（クライアント側の更新/削除は不可）
-- データベースレベルでの必須フィールドバリデーション
-- パブリック読み取りアクセス、認証済み書き込みアクセス
-- 管理者操作は認証済みAPIルートのみ
-
 ### 環境変数
 
-`.env.local` に必要：
+APIルートでのみ使用（`NEXT_PUBLIC_` プレフィックスなし）：
+
 ```
-JWT_SECRET=your-secret-key
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
+JWT_SECRET=
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
 ```
 
-### コードスタイル
+### コードスタイル（Biome 強制）
 
-- **インデント**: タブ（Biome によって強制）
-- **クォート**: 文字列にはダブルクォート
-- **インポート**: Biome によって自動整理
-- **コンポーネント**: TypeScript を使用した関数コンポーネント
-- **ファイル命名**: コンポーネントは PascalCase、ユーティリティは camelCase
-```
+- インデント: タブ
+- 文字列: ダブルクォート
+- クライアントコンポーネントには `@ant-design/v5-patch-for-react-19` をインポート
+
+## Git・GitHub 運用ルール
+
+- **main ブランチへの直接コミット禁止**
+- ブランチ命名: `feature/機能名`, `fix/バグ名`, `docs/説明`
+- PR 作成後は即 `git checkout main && git pull origin main`
+- PR ブランチへの追加変更は行わず、新しいブランチを作成する
