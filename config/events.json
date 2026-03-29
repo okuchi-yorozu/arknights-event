@@ -127,5 +127,17 @@
 		"defaultStage": "at-s-4",
 		"active": true,
 		"calculator": null
+	},
+	"os-ex": {
+		"id": "os-ex",
+		"title": "イベント『雪山降臨1101』EX攻略動画募集",
+		"deadline": "2026-05-01",
+		"thumbnailUrl": "/events/os/os-ex-8.jpg",
+		"stages": [
+			{ "value": "os-ex-8", "label": "OS-EX-8" }
+		],
+		"defaultStage": "os-ex-8",
+		"active": true,
+		"calculator": null
 	}
 }
