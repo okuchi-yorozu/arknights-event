@@ -1,33 +1,24 @@
-import { verifyToken } from "@/lib/auth/jwt";
-
+import { adminAuth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
 	try {
-		const token = (await cookies()).get("admin_token")?.value;
+		const cookieStore = await cookies();
+		const sessionCookie = cookieStore.get("admin_session")?.value;
 
-		if (!token) {
-			return NextResponse.json({ error: "No token found" }, { status: 401 });
+		if (!sessionCookie) {
+			return NextResponse.json(
+				{ error: "セッションがありません" },
+				{ status: 401 },
+			);
 		}
 
-		// トークンの検証
-		const decoded = await verifyToken(token);
-
-		return NextResponse.json({
-			authenticated: true,
-			role: decoded.role,
-		});
-	} catch (error) {
-		console.error("Auth check error:", error);
-
-		// エラーの種類に応じてレスポンスを返す
-		if (error instanceof Error) {
-			return NextResponse.json({ error: error.message }, { status: 401 });
-		}
-
+		const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
+		return NextResponse.json({ authenticated: true, email: decoded.email });
+	} catch {
 		return NextResponse.json(
-			{ error: "Authentication failed" },
+			{ error: "無効なセッションです" },
 			{ status: 401 },
 		);
 	}

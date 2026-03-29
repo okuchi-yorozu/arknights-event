@@ -1,40 +1,48 @@
-import { createToken } from "@/lib/auth/jwt";
-
+import { adminAuth } from "@/lib/firebase/admin";
 import { NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-if (!ADMIN_PASSWORD) {
-	throw new Error("ADMIN_PASSWORD environment variable is not set");
-}
+const ADMIN_EMAILS = (process.env.ADMIN_GOOGLE_EMAILS ?? "")
+	.split(",")
+	.map((e) => e.trim())
+	.filter(Boolean);
 
 export async function POST(request: Request) {
 	try {
-		const { password } = await request.json();
+		const { idToken } = await request.json();
 
-		if (password !== ADMIN_PASSWORD) {
-			return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+		if (!idToken) {
+			return NextResponse.json(
+				{ error: "IDトークンが必要です" },
+				{ status: 400 },
+			);
 		}
 
-		// JWTトークンの生成
-		const token = await createToken();
+		const decoded = await adminAuth.verifyIdToken(idToken);
 
-		// レスポンスの作成
-		const response = NextResponse.json(
-			{ success: true },
-			{
-				headers: {
-					"Set-Cookie": `admin_token=${token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=${24 * 60 * 60}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`,
-				},
-			},
-		);
+		if (!decoded.email || !ADMIN_EMAILS.includes(decoded.email)) {
+			return NextResponse.json(
+				{ error: "管理者権限がありません" },
+				{ status: 403 },
+			);
+		}
+
+		const expiresIn = 60 * 60 * 24 * 1000; // 24時間（ミリ秒）
+		const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+			expiresIn,
+		});
+
+		const response = NextResponse.json({ success: true });
+		response.cookies.set("admin_session", sessionCookie, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "strict",
+			maxAge: 60 * 60 * 24,
+			path: "/",
+		});
 
 		return response;
 	} catch (error) {
 		console.error("Auth error:", error);
-		return NextResponse.json(
-			{ error: "Authentication failed" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "認証に失敗しました" }, { status: 500 });
 	}
 }
