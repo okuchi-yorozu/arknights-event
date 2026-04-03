@@ -6,7 +6,6 @@ import type { EventConfig, EventStage } from "@/types/events";
 import {
 	DeleteOutlined,
 	EditOutlined,
-	ImportOutlined,
 	MinusCircleOutlined,
 	PlusOutlined,
 	UploadOutlined,
@@ -34,17 +33,10 @@ import { useCallback, useEffect, useState } from "react";
 
 const { Title } = Typography;
 
-type EventSource = "firestore" | "static";
-
-interface EventRow extends EventConfig {
-	source: EventSource;
-}
-
 interface EventFormValues {
 	id: string;
 	title: string;
 	deadline?: dayjs.Dayjs;
-	thumbnailUrl?: string;
 	stages: EventStage[];
 	defaultStage: string;
 	active: boolean;
@@ -52,39 +44,23 @@ interface EventFormValues {
 
 export default function AdminEventsPage() {
 	const { message, modal } = App.useApp();
-	const [events, setEvents] = useState<EventRow[]>([]);
+	const [events, setEvents] = useState<EventConfig[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [modalOpen, setModalOpen] = useState(false);
-	const [editingEvent, setEditingEvent] = useState<EventRow | null>(null);
+	const [editingEvent, setEditingEvent] = useState<EventConfig | null>(null);
 	const [form] = Form.useForm<EventFormValues>();
 	const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
-	const [importing, setImporting] = useState(false);
 
 	const fetchEvents = useCallback(async () => {
 		setLoading(true);
 		try {
-			const [eventsRes, firestoreIdsRes] = await Promise.all([
-				fetch("/api/admin/events"),
-				fetch("/api/admin/events?source=firestore-ids"),
-			]);
-
-			if (!eventsRes.ok) throw new Error("イベント一覧の取得に失敗しました");
-
-			const data: EventConfig[] = await eventsRes.json();
-			let firestoreIds = new Set<string>();
-			if (firestoreIdsRes.ok) {
-				const ids: string[] = await firestoreIdsRes.json();
-				firestoreIds = new Set(ids);
-			}
-
-			const rows: EventRow[] = data.map((e) => ({
-				...e,
-				source: firestoreIds.has(e.id) ? "firestore" : "static",
-			}));
-			setEvents(rows);
+			const res = await fetch("/api/admin/events");
+			if (!res.ok) throw new Error("イベント一覧の取得に失敗しました");
+			const data: EventConfig[] = await res.json();
+			setEvents(data);
 		} catch (err) {
 			message.error(err instanceof Error ? err.message : "読み込みに失敗しました");
 		} finally {
@@ -105,7 +81,7 @@ export default function AdminEventsPage() {
 		setModalOpen(true);
 	};
 
-	const openEditModal = (event: EventRow) => {
+	const openEditModal = (event: EventConfig) => {
 		setEditingEvent(event);
 		setThumbnailUrl(event.thumbnailUrl);
 		setFileList([]);
@@ -178,7 +154,7 @@ export default function AdminEventsPage() {
 		}
 	};
 
-	const handleDelete = async (event: EventRow) => {
+	const handleDelete = async (event: EventConfig) => {
 		const confirmed = await modal.confirm({
 			title: "イベントの削除",
 			content: `「${event.title}」を削除してもよろしいですか？`,
@@ -198,36 +174,12 @@ export default function AdminEventsPage() {
 		}
 	};
 
-	const handleImport = async () => {
-		const confirmed = await modal.confirm({
-			title: "JSONからインポート",
-			content: "events.json の全イベントを Firestore にインポートします（既存は上書き）。続けますか？",
-			okText: "インポート",
-			cancelText: "キャンセル",
-		});
-		if (!confirmed) return;
-
-		setImporting(true);
-		try {
-			const res = await fetch("/api/admin/events/import", { method: "POST" });
-			if (!res.ok) throw new Error("インポートに失敗しました");
-			const { count } = await res.json();
-			message.success(`${count} 件のイベントをインポートしました`);
-			fetchEvents();
-		} catch (err) {
-			message.error(err instanceof Error ? err.message : "インポートに失敗しました");
-		} finally {
-			setImporting(false);
-		}
-	};
-
-	// stages の変更を監視してデフォルトステージ選択肢を更新
 	const stages: EventStage[] = Form.useWatch("stages", form) ?? [];
 	const stageOptions = stages
 		.filter((s) => s?.value)
 		.map((s) => ({ value: s.value, label: s.label || s.value }));
 
-	const columns: ColumnsType<EventRow> = [
+	const columns: ColumnsType<EventConfig> = [
 		{
 			title: "ID",
 			dataIndex: "id",
@@ -248,18 +200,6 @@ export default function AdminEventsPage() {
 			render: (v: string | null) => v ?? "-",
 		},
 		{
-			title: "ソース",
-			dataIndex: "source",
-			key: "source",
-			width: 110,
-			render: (src: EventSource) =>
-				src === "firestore" ? (
-					<Tag color="blue">Firestore</Tag>
-				) : (
-					<Tag color="default">静的設定</Tag>
-				),
-		},
-		{
 			title: "公開",
 			dataIndex: "active",
 			key: "active",
@@ -270,31 +210,26 @@ export default function AdminEventsPage() {
 		{
 			title: "操作",
 			key: "action",
-			width: 170,
-			render: (_: unknown, record: EventRow) => {
-				if (record.source === "static") {
-					return <Tag color="default">読み取り専用</Tag>;
-				}
-				return (
-					<Space>
-						<Button
-							type="text"
-							icon={<EditOutlined />}
-							onClick={() => openEditModal(record)}
-						>
-							編集
-						</Button>
-						<Button
-							type="text"
-							danger
-							icon={<DeleteOutlined />}
-							onClick={() => handleDelete(record)}
-						>
-							削除
-						</Button>
-					</Space>
-				);
-			},
+			width: 160,
+			render: (_: unknown, record: EventConfig) => (
+				<Space>
+					<Button
+						type="text"
+						icon={<EditOutlined />}
+						onClick={() => openEditModal(record)}
+					>
+						編集
+					</Button>
+					<Button
+						type="text"
+						danger
+						icon={<DeleteOutlined />}
+						onClick={() => handleDelete(record)}
+					>
+						削除
+					</Button>
+				</Space>
+			),
 		},
 	];
 
@@ -305,18 +240,9 @@ export default function AdminEventsPage() {
 					<Title level={2} className="!mb-0">
 						イベント管理
 					</Title>
-					<Space>
-						<Button
-							icon={<ImportOutlined />}
-							onClick={handleImport}
-							loading={importing}
-						>
-							JSONからインポート
-						</Button>
-						<Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
-							新規イベント作成
-						</Button>
-					</Space>
+					<Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
+						新規イベント作成
+					</Button>
 				</div>
 
 				<Table

@@ -19,7 +19,7 @@ export interface EventCalculator {
 }
 
 /**
- * イベント設定（events.jsonの構造）
+ * イベント設定
  */
 export interface EventConfig {
 	id: string;
@@ -48,8 +48,3 @@ export interface CategorizedEvents {
 	active: ProcessedEvent[];
 	past: ProcessedEvent[];
 }
-
-/**
- * events.jsonの型定義
- */
-export type EventsConfig = Record<string, EventConfig>;
