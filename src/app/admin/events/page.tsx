@@ -169,9 +169,22 @@ export default function AdminEventsPage() {
 		try {
 			const res = await fetch("/api/admin/events/migrate-images", { method: "POST" });
 			if (!res.ok) throw new Error("移行に失敗しました");
-			const { migrated, errors } = await res.json();
+			const { migrated, errors, results } = await res.json();
 			if (errors > 0) {
-				message.warning(`${migrated} 件移行完了、${errors} 件エラー`);
+				const errorDetails = results
+					.filter((r: { status: string; id: string; reason?: string }) => r.status === "error")
+					.map((r: { id: string; reason?: string }) => `${r.id}: ${r.reason}`)
+					.join("\n");
+				console.error("移行エラー詳細:\n", errorDetails);
+				modal.error({
+					title: `${migrated} 件移行完了、${errors} 件エラー`,
+					content: (
+						<pre className="text-xs overflow-auto max-h-60 bg-gray-50 p-2 rounded">
+							{errorDetails}
+						</pre>
+					),
+					width: 560,
+				});
 			} else {
 				message.success(`${migrated} 件の画像を移行しました`);
 			}
