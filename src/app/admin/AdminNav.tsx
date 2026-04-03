@@ -8,6 +8,10 @@ import { usePathname } from "next/navigation";
 
 export function AdminNav() {
 	const pathname = usePathname();
+
+	// ログインページではナビゲーションを表示しない
+	if (pathname === "/admin/login") return null;
+
 	const selectedKey = pathname.startsWith("/admin/events") ? "/admin/events" : "/admin";
 
 	const items = [
