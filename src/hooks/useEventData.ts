@@ -35,7 +35,6 @@ export function useEvents(): CategorizedEvents {
 	return useMemo(() => {
 		const events = eventsConfig as EventsConfig;
 		const allEvents = Object.values(events)
-			.filter((event) => event.active)
 			.map(processEvent)
 			.sort((a, b) => (b.deadline ?? "").localeCompare(a.deadline ?? ""));
 
