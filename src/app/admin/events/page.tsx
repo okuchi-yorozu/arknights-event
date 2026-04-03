@@ -4,6 +4,7 @@ import "@ant-design/v5-patch-for-react-19";
 
 import type { EventConfig, EventStage } from "@/types/events";
 import {
+	CloudUploadOutlined,
 	DeleteOutlined,
 	EditOutlined,
 	MinusCircleOutlined,
@@ -53,6 +54,7 @@ export default function AdminEventsPage() {
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
+	const [migrating, setMigrating] = useState(false);
 
 	const fetchEvents = useCallback(async () => {
 		setLoading(true);
@@ -154,6 +156,33 @@ export default function AdminEventsPage() {
 		}
 	};
 
+	const handleMigrateImages = async () => {
+		const confirmed = await modal.confirm({
+			title: "画像を Firebase Storage に移行",
+			content: "ローカルパスのサムネイル画像をすべて Firebase Storage にアップロードし、Firestore の URL を更新します。続けますか？",
+			okText: "移行する",
+			cancelText: "キャンセル",
+		});
+		if (!confirmed) return;
+
+		setMigrating(true);
+		try {
+			const res = await fetch("/api/admin/events/migrate-images", { method: "POST" });
+			if (!res.ok) throw new Error("移行に失敗しました");
+			const { migrated, errors } = await res.json();
+			if (errors > 0) {
+				message.warning(`${migrated} 件移行完了、${errors} 件エラー`);
+			} else {
+				message.success(`${migrated} 件の画像を移行しました`);
+			}
+			fetchEvents();
+		} catch (err) {
+			message.error(err instanceof Error ? err.message : "移行に失敗しました");
+		} finally {
+			setMigrating(false);
+		}
+	};
+
 	const handleDelete = async (event: EventConfig) => {
 		const confirmed = await modal.confirm({
 			title: "イベントの削除",
@@ -240,6 +269,13 @@ export default function AdminEventsPage() {
 					<Title level={2} className="!mb-0">
 						イベント管理
 					</Title>
+					<Button
+						icon={<CloudUploadOutlined />}
+						onClick={handleMigrateImages}
+						loading={migrating}
+					>
+						画像をStorageに移行
+					</Button>
 					<Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
 						新規イベント作成
 					</Button>
