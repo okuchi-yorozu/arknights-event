@@ -1,6 +1,5 @@
+import { getEventById } from "@/lib/firebase/events-admin";
 import { notFound } from "next/navigation";
-
-import eventsConfig from "../../../../config/events.json";
 import { ClientCalculatePage } from "./ClientCalculatePage";
 
 interface CalculatePageProps {
@@ -11,7 +10,7 @@ interface CalculatePageProps {
 
 export default async function CalculatePage({ params }: CalculatePageProps) {
 	const { eventId } = await params;
-	const eventConfig = eventsConfig[eventId as keyof typeof eventsConfig];
+	const eventConfig = await getEventById(eventId);
 
 	if (!eventConfig || !eventConfig.active || !eventConfig.calculator) {
 		notFound();
