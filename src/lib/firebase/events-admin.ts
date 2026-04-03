@@ -1,9 +1,8 @@
 /**
- * Firestore イベント CRUD + events.json フォールバック（サーバーサイド専用）
+ * Firestore イベント CRUD（サーバーサイド専用）
  */
 
-import eventsConfig from "../../../config/events.json";
-import type { EventConfig, EventsConfig } from "@/types/events";
+import type { EventConfig } from "@/types/events";
 import { adminDb } from "./admin";
 
 function toEventConfig(id: string, data: FirebaseFirestore.DocumentData): EventConfig {
@@ -20,44 +19,22 @@ function toEventConfig(id: string, data: FirebaseFirestore.DocumentData): EventC
 }
 
 /**
- * Firestore に存在するイベント ID のセットを返す
- */
-export async function getFirestoreEventIds(): Promise<Set<string>> {
-	const snapshot = await adminDb.collection("events").get();
-	return new Set(snapshot.docs.map((doc) => doc.id));
-}
-
-/**
- * 全イベントを取得（Firestore 優先、存在しないものは events.json で補完）
+ * 全イベントを Firestore から取得
  * @param includeInactive - 非アクティブなイベントも含める場合 true
  */
 export async function getAllEvents(includeInactive = false): Promise<EventConfig[]> {
 	const snapshot = await adminDb.collection("events").get();
-	const firestoreEvents = snapshot.docs.map((doc) =>
-		toEventConfig(doc.id, doc.data()),
-	);
-	const firestoreIds = new Set(firestoreEvents.map((e) => e.id));
-
-	// events.json のうち Firestore にないものをフォールバックとして追加
-	const jsonFallback = Object.values(eventsConfig as EventsConfig).filter(
-		(e) => !firestoreIds.has(e.id),
-	);
-
-	const all = [...firestoreEvents, ...jsonFallback];
-	return includeInactive ? all : all.filter((e) => e.active);
+	const events = snapshot.docs.map((doc) => toEventConfig(doc.id, doc.data()));
+	return includeInactive ? events : events.filter((e) => e.active);
 }
 
 /**
- * 単一イベントを取得（Firestore → events.json の順で検索）
+ * 単一イベントを Firestore から取得
  */
 export async function getEventById(eventId: string): Promise<EventConfig | null> {
 	const doc = await adminDb.collection("events").doc(eventId).get();
-	if (doc.exists) {
-		return toEventConfig(doc.id, doc.data()!);
-	}
-
-	const json = eventsConfig as EventsConfig;
-	return json[eventId] ?? null;
+	if (!doc.exists) return null;
+	return toEventConfig(doc.id, doc.data()!);
 }
 
 /**
