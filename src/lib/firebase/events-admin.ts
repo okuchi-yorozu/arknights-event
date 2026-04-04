@@ -15,7 +15,6 @@ function toEventConfig(id: string, data: FirebaseFirestore.DocumentData): EventC
 		stages: data.stages ?? [],
 		defaultStage: data.defaultStage ?? "",
 		active: data.active ?? false,
-		calculator: data.calculator ?? null,
 	};
 }
 

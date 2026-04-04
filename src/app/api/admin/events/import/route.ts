@@ -40,7 +40,6 @@ export async function POST() {
 					stages: event.stages,
 					defaultStage: event.defaultStage,
 					active: event.active,
-					calculator: event.calculator ?? null,
 				}),
 			),
 		);

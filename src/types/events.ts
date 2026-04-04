@@ -11,14 +11,6 @@ export interface EventStage {
 }
 
 /**
- * イベント計算機の設定
- */
-export interface EventCalculator {
-	title: string;
-	fiveStarOperatorImages: string[];
-}
-
-/**
  * イベント設定（events.jsonの構造）
  */
 export interface EventConfig {
@@ -29,7 +21,6 @@ export interface EventConfig {
 	stages: EventStage[];
 	defaultStage: string;
 	active: boolean;
-	calculator?: EventCalculator | null;
 }
 
 /**

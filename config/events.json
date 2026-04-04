@@ -8,8 +8,7 @@
 			{ "value": "ep-ex-8", "label": "EP-EX-8" }
 		],
 		"defaultStage": "ep-ex-8",
-		"active": false,
-		"calculator": null
+		"active": false
 	},
 	"or-ex": {
 		"id": "or-ex",
@@ -20,8 +19,7 @@
 			{ "value": "or-ex-8", "label": "OR-EX-8" }
 		],
 		"defaultStage": "or-ex-8",
-		"active": false,
-		"calculator": null
+		"active": false
 	},
 	"or-s": {
 		"id": "or-s",
@@ -32,8 +30,7 @@
 			{ "value": "or-s-4", "label": "OR-S-4" }
 		],
 		"defaultStage": "or-s-4",
-		"active": false,
-		"calculator": null
+		"active": false
 	},
 	"go": {
 		"id": "go",
@@ -44,24 +41,7 @@
 			{ "value": "go-ex-8", "label": "GO-EX-8" }
 		],
 		"defaultStage": "go-ex-8",
-		"active": false,
-		"calculator": {
-			"title": "イベント『落日の向こうへ』契約計算機",
-			"fiveStarOperatorImages": [
-				"/img/operators/five_stars/エリジウム.png",
-				"/img/operators/five_stars/テキサス.png",
-				"/img/operators/five_stars/ファイヤーホイッスル.png",
-				"/img/operators/five_stars/バイソン.png",
-				"/img/operators/five_stars/フィリオプシス.png",
-				"/img/operators/five_stars/クエルクス.png",
-				"/img/operators/five_stars/シーン.png",
-				"/img/operators/five_stars/スプリア.png",
-				"/img/operators/five_stars/プロヴァンス.png",
-				"/img/operators/five_stars/ファイヤーウォッチ.png",
-				"/img/operators/five_stars/エイプリル.png",
-				"/img/operators/five_stars/ヴァラルクビン.png"
-			]
-		}
+		"active": false
 	},
 	"pv": {
 		"id": "pv",
@@ -73,24 +53,7 @@
 			{ "value": "pv-s-5", "label": "PV-S-5" }
 		],
 		"defaultStage": "pv-ex-8",
-		"active": false,
-		"calculator": {
-			"title": "イベント『幕開く者たち』契約計算機",
-			"fiveStarOperatorImages": [
-				"/img/operators/five_stars/エリジウム.png",
-				"/img/operators/five_stars/テキサス.png",
-				"/img/operators/five_stars/ファイヤーホイッスル.png",
-				"/img/operators/five_stars/バイソン.png",
-				"/img/operators/five_stars/フィリオプシス.png",
-				"/img/operators/five_stars/クエルクス.png",
-				"/img/operators/five_stars/シーン.png",
-				"/img/operators/five_stars/スプリア.png",
-				"/img/operators/five_stars/プロヴァンス.png",
-				"/img/operators/five_stars/ファイヤーウォッチ.png",
-				"/img/operators/five_stars/エイプリル.png",
-				"/img/operators/five_stars/ヴァラルクビン.png"
-			]
-		}
+		"active": false
 	},
 	"ea-ex": {
 		"id": "ea-ex",
@@ -101,8 +64,7 @@
 			{ "value": "ea-ex-8", "label": "EA-EX-8" }
 		],
 		"defaultStage": "ea-ex-8",
-		"active": false,
-		"calculator": null
+		"active": false
 	},
 	"at-ex": {
 		"id": "at-ex",
@@ -113,8 +75,7 @@
 			{ "value": "at-ex-8", "label": "AT-EX-8" }
 		],
 		"defaultStage": "at-ex-8",
-		"active": true,
-		"calculator": null
+		"active": true
 	},
 	"at-s": {
 		"id": "at-s",
@@ -125,8 +86,7 @@
 			{ "value": "at-s-4", "label": "AT-S-4" }
 		],
 		"defaultStage": "at-s-4",
-		"active": true,
-		"calculator": null
+		"active": true
 	},
 	"os-ex": {
 		"id": "os-ex",
@@ -137,7 +97,6 @@
 			{ "value": "os-ex-8", "label": "OS-EX-8" }
 		],
 		"defaultStage": "os-ex-8",
-		"active": true,
-		"calculator": null
+		"active": true
 	}
 }
