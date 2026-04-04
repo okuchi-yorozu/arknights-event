@@ -1,15 +1,11 @@
 /**
  * 管理者向けイベント API
- * GET: 全イベント一覧（Firestore + events.json フォールバック）
+ * GET: 全イベント一覧（Firestore）
  * POST: 新規イベント作成（Firestore）
  */
 
 import { adminAuth } from "@/lib/firebase/admin";
-import {
-	getAllEvents,
-	getFirestoreEventIds,
-	setEvent,
-} from "@/lib/firebase/events-admin";
+import { getAllEvents, setEvent } from "@/lib/firebase/events-admin";
 import type { EventConfig } from "@/types/events";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -26,25 +22,9 @@ async function verifyAdmin(): Promise<boolean> {
 	}
 }
 
-export async function GET(request: Request) {
+export async function GET() {
 	if (!(await verifyAdmin())) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { searchParams } = new URL(request.url);
-
-	// ?source=firestore-ids の場合は Firestore 管理のイベント ID 一覧を返す
-	if (searchParams.get("source") === "firestore-ids") {
-		try {
-			const ids = await getFirestoreEventIds();
-			return NextResponse.json(Array.from(ids));
-		} catch (error) {
-			console.error("FirestoreイベントID取得エラー:", error);
-			return NextResponse.json(
-				{ error: "FirestoreイベントIDの取得に失敗しました" },
-				{ status: 500 },
-			);
-		}
 	}
 
 	try {
