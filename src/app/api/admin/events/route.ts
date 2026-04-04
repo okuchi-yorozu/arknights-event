@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
 	try {
 		const body = (await request.json()) as EventConfig;
-		const { id, title, deadline, thumbnailUrl, stages, defaultStage, active, calculator } = body;
+		const { id, title, deadline, thumbnailUrl, stages, defaultStage, active } = body;
 
 		if (!id || !/^[a-z0-9-]+$/.test(id)) {
 			return NextResponse.json(
@@ -71,7 +71,6 @@ export async function POST(request: Request) {
 			stages,
 			defaultStage: defaultStage ?? stages[0].value,
 			active: active ?? false,
-			calculator: calculator ?? null,
 		});
 
 		return NextResponse.json({ success: true, id });

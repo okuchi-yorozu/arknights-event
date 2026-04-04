@@ -123,7 +123,6 @@ export default function AdminEventsPage() {
 				stages: values.stages,
 				defaultStage: values.defaultStage,
 				active: values.active,
-				calculator: editingEvent?.calculator ?? null,
 			};
 
 			if (editingEvent) {
