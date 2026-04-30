@@ -24,21 +24,36 @@ export const GoogleLoginForm = ({ error }: Props) => {
 		setLocalError(null);
 		const provider = new GoogleAuthProvider();
 		try {
-			// ポップアップ方式を試みる（onAuthStateChanged がセッション作成を担う）
-			await signInWithPopup(clientAuth, provider);
+			// ポップアップ方式（サーバーセッション作成まで完結）
+			const result = await signInWithPopup(clientAuth, provider);
+			const idToken = await result.user.getIdToken();
+			const res = await fetch("/api/admin/auth", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ idToken }),
+			});
+			if (res.ok) {
+				window.location.href = "/admin";
+			} else {
+				const data = await res.json();
+				setLocalError(data.error ?? "ログインに失敗しました");
+				setLoading(false);
+			}
 		} catch (popupError: unknown) {
-			const code =
-				(popupError as { code?: string }).code ?? "";
+			const code = (popupError as { code?: string }).code ?? "";
 
 			if (
 				code === "auth/popup-blocked" ||
 				code === "auth/popup-closed-by-user"
 			) {
-				// ポップアップがブロックされた場合はリダイレクト方式にフォールバック
+				// ポップアップがブロックされた場合のみリダイレクト方式にフォールバック
+				// sessionStorage フラグを立てて LoginPage 側に認証処理を委ねる
+				sessionStorage.setItem("google_redirect_pending", "1");
 				try {
 					await signInWithRedirect(clientAuth, provider);
 					return; // リダイレクト遷移のためここで終了
 				} catch (redirectError) {
+					sessionStorage.removeItem("google_redirect_pending");
 					console.error("Redirect error:", redirectError);
 					setLocalError("ログインに失敗しました");
 				}
