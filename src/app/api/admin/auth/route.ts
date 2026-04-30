@@ -20,6 +20,10 @@ export async function POST(request: Request) {
 		const decoded = await adminAuth.verifyIdToken(idToken);
 
 		if (!decoded.email || !ADMIN_EMAILS.includes(decoded.email)) {
+			// TODO: デバッグ確認後に削除する
+			console.error(
+				`[auth] 権限なし: received="${decoded.email}" allowed="${ADMIN_EMAILS.join(",")}"`
+			);
 			return NextResponse.json(
 				{ error: "管理者権限がありません" },
 				{ status: 403 },
