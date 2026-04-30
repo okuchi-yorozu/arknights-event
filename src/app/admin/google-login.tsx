@@ -4,56 +4,12 @@ import "@ant-design/v5-patch-for-react-19";
 import { clientAuth } from "@/lib/firebase/client";
 import { GoogleOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
-import {
-	GoogleAuthProvider,
-	getRedirectResult,
-	signInWithRedirect,
-} from "firebase/auth";
-import { useEffect, useState } from "react";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { useState } from "react";
 
-interface Props {
-	onSuccess: () => void;
-}
-
-export const GoogleLoginForm = ({ onSuccess }: Props) => {
-	const [loading, setLoading] = useState(true);
+export const GoogleLoginForm = () => {
+	const [loading, setLoading] = useState(false);
 	const [messageApi, contextHolder] = message.useMessage();
-
-	// Googleリダイレクト後に戻ってきた際の結果を処理する
-	useEffect(() => {
-		const handleRedirectResult = async () => {
-			try {
-				const result = await getRedirectResult(clientAuth);
-				if (!result) {
-					// リダイレクト経由でない通常アクセス
-					setLoading(false);
-					return;
-				}
-
-				const idToken = await result.user.getIdToken();
-				const response = await fetch("/api/admin/auth", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ idToken }),
-				});
-
-				if (response.ok) {
-					onSuccess();
-				} else {
-					const data = await response.json();
-					messageApi.error(data.error ?? "ログインに失敗しました");
-					setLoading(false);
-				}
-			} catch (error) {
-				console.error("Redirect result error:", error);
-				setLoading(false);
-			}
-		};
-
-		handleRedirectResult();
-		// onSuccess・messageApi はマウント時の1回のみ実行するため依存配列から除外
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const handleGoogleLogin = async () => {
 		setLoading(true);
