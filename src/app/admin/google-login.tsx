@@ -46,8 +46,6 @@ export const GoogleLoginForm = ({ error }: Props) => {
 			}
 		} catch (popupError: unknown) {
 			const code = (popupError as { code?: string }).code ?? "";
-			// TODO: デバッグ確認後に削除する
-			console.error("popup error code:", code, popupError);
 
 			if (code === "auth/popup-blocked") {
 				setLocalError(
