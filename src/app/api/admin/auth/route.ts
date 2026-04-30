@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 		if (!decoded.email || !ADMIN_EMAILS.includes(decoded.email)) {
 			// TODO: デバッグ確認後に削除する
 			console.error(
-				`[auth] 権限なし: received="${decoded.email}" allowed="${ADMIN_EMAILS.join(",")}"`
+				`[auth] 権限なし: email="${decoded.email}" provider="${decoded.firebase?.sign_in_provider}" uid="${decoded.uid}" allowed="${ADMIN_EMAILS.join(",")}"`
 			);
 			return NextResponse.json(
 				{ error: "管理者権限がありません" },
