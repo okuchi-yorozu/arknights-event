@@ -46,18 +46,17 @@ export const GoogleLoginForm = ({ error }: Props) => {
 			}
 		} catch (popupError: unknown) {
 			const code = (popupError as { code?: string }).code ?? "";
+			// TODO: デバッグ確認後に削除する
+			console.error("popup error code:", code, popupError);
 
 			if (code === "auth/popup-blocked") {
-				// リダイレクト方式は Chrome のストレージ分離問題で Vercel 上では動作しないため
-				// ポップアップを許可するよう案内する
 				setLocalError(
-					"ポップアップがブロックされました。アドレスバーのアイコンをクリックして、このサイトのポップアップを許可してください。",
+					`ポップアップがブロックされました（${code}）。アドレスバーのアイコンをクリックして、このサイトのポップアップを許可してください。`,
 				);
 			} else if (code === "auth/popup-closed-by-user") {
 				// ユーザーがキャンセルした場合はエラー表示しない
 			} else {
-				console.error("Login error:", popupError);
-				setLocalError("ログインに失敗しました");
+				setLocalError(`ログインに失敗しました（${code}）`);
 			}
 			setLoading(false);
 		}
