@@ -51,10 +51,10 @@ export default function LoginPage() {
 					return;
 				}
 			} catch (error: unknown) {
-				const code = (error as { code?: string }).code ?? "";
+				const code = (error as { code?: string }).code;
 				// ユーザーがキャンセルした場合はエラー表示しない
 				if (code !== "auth/redirect-cancelled-by-user") {
-					setAuthError(`ログインに失敗しました（${code}）`);
+					setAuthError("ログインに失敗しました");
 				}
 				setIsChecking(false);
 				return;

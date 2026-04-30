@@ -22,9 +22,8 @@ export const GoogleLoginForm = ({ error }: Props) => {
 		try {
 			await signInWithRedirect(clientAuth, provider);
 			// ページ遷移するためここより後は実行されない
-		} catch (redirectError: unknown) {
-			const code = (redirectError as { code?: string }).code ?? "";
-			setLocalError(`ログインに失敗しました（${code}）`);
+		} catch {
+			setLocalError("ログインに失敗しました");
 			setLoading(false);
 		}
 	};
