@@ -4,11 +4,7 @@ import "@ant-design/v5-patch-for-react-19";
 import { clientAuth } from "@/lib/firebase/client";
 import { GoogleOutlined } from "@ant-design/icons";
 import { Alert, Button } from "antd";
-import {
-	GoogleAuthProvider,
-	signInWithPopup,
-	signInWithRedirect,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 
 interface Props {
@@ -24,8 +20,17 @@ export const GoogleLoginForm = ({ error }: Props) => {
 		setLocalError(null);
 		const provider = new GoogleAuthProvider();
 		try {
-			// ポップアップ方式（サーバーセッション作成まで完結）
 			const result = await signInWithPopup(clientAuth, provider);
+
+			// 匿名ユーザーは拒否（Firebase設定が誤っている場合の安全ガード）
+			if (result.user.isAnonymous) {
+				setLocalError(
+					"Firebase の設定が正しくありません。管理者に連絡してください。",
+				);
+				setLoading(false);
+				return;
+			}
+
 			const idToken = await result.user.getIdToken();
 			const res = await fetch("/api/admin/auth", {
 				method: "POST",
@@ -42,21 +47,14 @@ export const GoogleLoginForm = ({ error }: Props) => {
 		} catch (popupError: unknown) {
 			const code = (popupError as { code?: string }).code ?? "";
 
-			if (
-				code === "auth/popup-blocked" ||
-				code === "auth/popup-closed-by-user"
-			) {
-				// ポップアップがブロックされた場合のみリダイレクト方式にフォールバック
-				// sessionStorage フラグを立てて LoginPage 側に認証処理を委ねる
-				sessionStorage.setItem("google_redirect_pending", "1");
-				try {
-					await signInWithRedirect(clientAuth, provider);
-					return; // リダイレクト遷移のためここで終了
-				} catch (redirectError) {
-					sessionStorage.removeItem("google_redirect_pending");
-					console.error("Redirect error:", redirectError);
-					setLocalError("ログインに失敗しました");
-				}
+			if (code === "auth/popup-blocked") {
+				// リダイレクト方式は Chrome のストレージ分離問題で Vercel 上では動作しないため
+				// ポップアップを許可するよう案内する
+				setLocalError(
+					"ポップアップがブロックされました。アドレスバーのアイコンをクリックして、このサイトのポップアップを許可してください。",
+				);
+			} else if (code === "auth/popup-closed-by-user") {
+				// ユーザーがキャンセルした場合はエラー表示しない
 			} else {
 				console.error("Login error:", popupError);
 				setLocalError("ログインに失敗しました");
