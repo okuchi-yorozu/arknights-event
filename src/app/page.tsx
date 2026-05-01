@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllEvents } from "@/lib/firebase/events-admin";
 import { isEventActive } from "@/lib/utils/date";
 import type { ProcessedEvent } from "@/types/events";
